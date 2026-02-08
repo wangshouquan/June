@@ -5,7 +5,7 @@ import com.denser.june.di.juneModules
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-import com.denser.june.core.domain.utils.FileUtils
+import com.denser.june.core.utils.FileUtils
 import com.denser.june.core.domain.JournalRepo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

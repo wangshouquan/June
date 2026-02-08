@@ -29,8 +29,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.denser.june.core.domain.AppPreferences
 import com.denser.june.core.domain.enums.LockType
-import com.denser.june.core.presentation.components.PinLockScreen
+import com.denser.june.presentation.components.PinLockScreen
 import com.denser.june.core.utils.SecurityUtils
+import com.denser.june.presentation.JuneApp
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject

@@ -1,6 +1,6 @@
 package com.denser.june.core.domain
 
-import com.denser.june.core.domain.enums.AppTheme
+import com.denser.june.core.domain.enums.ThemeMode
 import com.denser.june.core.domain.enums.Fonts
 import com.denser.june.core.domain.enums.LockType
 import com.materialkolor.PaletteStyle
@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 interface AppPreferences {
     suspend fun resetAppTheme()
 
-    fun getAppThemePrefFlow(): Flow<AppTheme>
-    suspend fun updateAppThemePref(pref: AppTheme)
+    fun getAppThemePrefFlow(): Flow<ThemeMode>
+    suspend fun updateAppThemePref(pref: ThemeMode)
 
     fun getSeedColorFlow(): Flow<Int>
     suspend fun updateSeedColor(newCardContent: Int)

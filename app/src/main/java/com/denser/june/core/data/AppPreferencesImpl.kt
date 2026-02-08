@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.denser.june.core.domain.AppPreferences
-import com.denser.june.core.domain.enums.AppTheme
+import com.denser.june.core.domain.enums.ThemeMode
 import com.denser.june.core.domain.enums.Fonts
 import com.denser.june.core.domain.enums.LockType
 import com.materialkolor.PaletteStyle
@@ -44,13 +44,13 @@ class AppPreferencesImpl(
         private val pinHash = stringPreferencesKey("pin_hash")
     }
 
-    override fun getAppThemePrefFlow(): Flow<AppTheme> = dataStore.data
+    override fun getAppThemePrefFlow(): Flow<ThemeMode> = dataStore.data
         .map { preferences ->
-            val theme = preferences[appTheme] ?: AppTheme.SYSTEM.name
-            AppTheme.valueOf(theme)
+            val theme = preferences[appTheme] ?: ThemeMode.SYSTEM.name
+            ThemeMode.valueOf(theme)
         }
 
-    override suspend fun updateAppThemePref(pref: AppTheme) {
+    override suspend fun updateAppThemePref(pref: ThemeMode) {
         dataStore.edit {
             it[appTheme] = pref.name
         }
