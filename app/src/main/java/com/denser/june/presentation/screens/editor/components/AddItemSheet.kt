@@ -84,7 +84,7 @@ fun AddItemSheet(
                 )
                 AddItem(
                     icon = R.drawable.add_photo_alternate_24px,
-                    text = "Add photo",
+                    text = "Add photo / video",
                     onClick = { onAddPhotoClick(); onDismiss() }
                 )
                 AddItem(
