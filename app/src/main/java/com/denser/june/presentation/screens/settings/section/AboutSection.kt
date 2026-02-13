@@ -18,18 +18,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.denser.june.BuildConfig
 import com.denser.june.R
 import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.navigation.Route
@@ -67,15 +66,6 @@ fun AboutSection() {
 fun AboutHeaderTile(
     onGithubClick: () -> Unit
 ) {
-    val context = LocalContext.current
-    val versionName = remember {
-        try {
-            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            packageInfo.versionName
-        } catch (_: Exception) {
-            "1.0.0"
-        }
-    }
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = RoundedCornerShape(10.dp)
@@ -90,8 +80,7 @@ fun AboutHeaderTile(
                 modifier = Modifier
                     .size(64.dp)
                     .clip(RoundedCornerShape(16.dp)),
-
-                ) {
+            ) {
                 Image(
                     painter = painterResource(R.drawable.ic_launcher_background),
                     contentDescription = null,
@@ -111,13 +100,13 @@ fun AboutHeaderTile(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "June",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "v$versionName",
+                    text = "v${BuildConfig.VERSION_NAME}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
