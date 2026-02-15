@@ -4,11 +4,38 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface JournalDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertJournal(journal: JournalEntity): Long
+
+    @Update
+    suspend fun updateJournal(journal: JournalEntity)
+
+    @Query("DELETE FROM journals WHERE id = :id")
+    suspend fun deleteJournal(id: Long)
+
+    @Query("DELETE FROM journals")
+    suspend fun deleteAllJournals()
+
+    @Query("SELECT * FROM journals ORDER BY dateTime DESC")
+    fun getAllJournals(): Flow<List<JournalEntity>>
+
+    @Query("SELECT * FROM journals WHERE id = :id")
+    suspend fun getJournalById(id: Long): JournalEntity?
+
+    @Query("SELECT * FROM journals ORDER BY dateTime DESC LIMIT 1")
+    suspend fun getLatestJournal(): JournalEntity?
+
+    @Query("SELECT * FROM journals WHERE title LIKE '%' || :query || '%' ")
+    fun searchJournal(query: String): Flow<List<JournalEntity>>
+
+    @Query(""" SELECT * FROM journals WHERE dateTime >= :startDate AND dateTime <= :endDate ORDER BY dateTime DESC """)
+    fun getJournalsByDateRange(startDate: Long, endDate: Long): Flow<List<JournalEntity>>
 
     @Query("""
         SELECT * FROM journals 
@@ -53,34 +80,31 @@ interface JournalDao {
         hasSong: Boolean? = null
     ): Flow<List<JournalEntity>>
 
+    @Transaction
     @Query("""
-        SELECT * FROM journals 
-        WHERE dateTime >= :startDate AND dateTime <= :endDate
-        ORDER BY dateTime DESC
+        SELECT j.* FROM journals j
+        INNER JOIN journal_tag_cross_ref ref ON j.id = ref.id
+        INNER JOIN tags t ON ref.tagId = t.tagId
+        WHERE t.name = :tagName
+        ORDER BY j.dateTime DESC
     """)
-    fun getJournalsByDateRange(startDate: Long, endDate: Long): Flow<List<JournalEntity>>
+    fun getJournalsByTagName(tagName: String): Flow<List<JournalEntity>>
 
-    @Query("SELECT * FROM journals")
-    fun getAllJournals(): Flow<List<JournalEntity>>
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertTag(tag: TagEntity): Long
+
+    @Query("SELECT tagId FROM tags WHERE name = :name LIMIT 1")
+    suspend fun getTagIdByName(name: String): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertJournal(journal: JournalEntity): Long
+    suspend fun insertJournalTagCrossRef(crossRef: JournalTagCrossRef)
 
-    @Query("DELETE FROM journals WHERE id = :id")
-    suspend fun deleteJournal(id: Long)
+    @Query("DELETE FROM journal_tag_cross_ref WHERE id = :journalId")
+    suspend fun deleteTagsForJournal(journalId: Long)
 
-    @Update
-    suspend fun updateJournal(journal: JournalEntity)
+    @Query("SELECT name FROM tags WHERE name LIKE :query || '%' ORDER BY name ASC")
+    fun getTagSuggestions(query: String): Flow<List<String>>
 
-    @Query("SELECT * FROM journals WHERE id = :id")
-    suspend fun getJournalById(id: Long): JournalEntity?
-
-    @Query("SELECT * FROM journals ORDER BY dateTime DESC LIMIT 1")
-    suspend fun getLatestJournal(): JournalEntity?
-
-    @Query("SELECT * FROM journals WHERE title LIKE '%' || :query || '%' ")
-    fun searchJournal(query: String): Flow<List<JournalEntity>>
-
-    @Query("DELETE FROM journals")
-    suspend fun deleteAllJournals()
+    @Query("SELECT name FROM tags ORDER BY name ASC")
+    fun getAllUniqueTags(): Flow<List<String>>
 }

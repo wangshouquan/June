@@ -1,6 +1,8 @@
 package com.denser.june.core.data
 
 import com.denser.june.core.data.database.journal.JournalDao
+import com.denser.june.core.data.database.journal.JournalTagCrossRef
+import com.denser.june.core.data.database.journal.TagEntity
 import com.denser.june.core.data.mappers.toEntity
 import com.denser.june.core.data.mappers.toJournal
 import com.denser.june.core.domain.JournalRepo
@@ -17,47 +19,23 @@ class JournalRepository(
 
     override suspend fun insertJournal(journal: Journal): Long {
         return withContext(Dispatchers.IO) {
-            localDao.insertJournal(journal.toEntity())
-        }
-    }
-
-    override fun getJournals(): Flow<List<Journal>> {
-        return localDao.getAllJournals().map { entities ->
-            entities.map { it.toJournal() }
-        }
-    }
-
-    override suspend fun getAllJournals(): List<Journal> {
-        return localDao.getAllJournals().first().map { it.toJournal() }
-    }
-
-    override suspend fun getJournalById(id: Long): Journal? {
-        return withContext(Dispatchers.IO) {
-            localDao.getJournalById(id)?.toJournal()
-        }
-    }
-
-    override suspend fun getLatestJournal(): Journal? {
-        return withContext(Dispatchers.IO) {
-            localDao.getLatestJournal()?.toJournal()
-        }
-    }
-
-    override suspend fun searchJournals(query: String): Flow<List<Journal>> {
-        return localDao.searchJournal(query).map { entities ->
-            entities.map { it.toJournal() }
+            val journalId = localDao.insertJournal(journal.toEntity())
+            syncJournalTags(journalId, journal.tags)
+            journalId
         }
     }
 
     override suspend fun updateJournal(journal: Journal) {
         withContext(Dispatchers.IO) {
             localDao.updateJournal(journal.toEntity())
+            syncJournalTags(journal.id, journal.tags)
         }
     }
 
     override suspend fun deleteJournal(id: Long) {
         withContext(Dispatchers.IO) {
             localDao.deleteJournal(id)
+            localDao.deleteTagsForJournal(id)
         }
     }
 
@@ -67,11 +45,36 @@ class JournalRepository(
         }
     }
 
-    override fun getJournalsByDateRange(startDate: Long, endDate: Long): Flow<List<Journal>> {
-        return localDao.getJournalsByDateRange(startDate, endDate).map { entities ->
-            entities.map { it.toJournal() }
+    private suspend fun syncJournalTags(journalId: Long, tags: List<String>) {
+        localDao.deleteTagsForJournal(journalId)
+        tags.forEach { tagName ->
+            localDao.insertTag(TagEntity(name = tagName))
+            localDao.getTagIdByName(tagName)?.let { tagId ->
+                localDao.insertJournalTagCrossRef(JournalTagCrossRef(journalId, tagId))
+            }
         }
     }
+
+    override fun getJournals(): Flow<List<Journal>> =
+        localDao.getAllJournals().map { entities -> entities.map { it.toJournal() } }
+
+    override suspend fun getAllJournals(): List<Journal> =
+        localDao.getAllJournals().first().map { it.toJournal() }
+
+    override suspend fun getJournalById(id: Long): Journal? =
+        withContext(Dispatchers.IO) { localDao.getJournalById(id)?.toJournal() }
+
+    override suspend fun getLatestJournal(): Journal? =
+        withContext(Dispatchers.IO) { localDao.getLatestJournal()?.toJournal() }
+
+    override fun searchJournals(query: String): Flow<List<Journal>> =
+        localDao.searchJournal(query).map { entities -> entities.map { it.toJournal() } }
+
+    override fun getJournalsByTag(tagName: String): Flow<List<Journal>> =
+        localDao.getJournalsByTagName(tagName).map { entities -> entities.map { it.toJournal() } }
+
+    override fun getJournalsByDateRange(startDate: Long, endDate: Long): Flow<List<Journal>> =
+        localDao.getJournalsByDateRange(startDate, endDate).map { entities -> entities.map { it.toJournal() } }
 
     override fun getFilteredJournals(
         query: String,
@@ -79,15 +82,10 @@ class JournalRepository(
         isDraft: Boolean?,
         hasLocation: Boolean?,
         hasSong: Boolean?
-    ): Flow<List<Journal>> {
-        return localDao.getJournals(
-            query,
-            isBookmarked,
-            isDraft,
-            hasLocation,
-            hasSong
-        ).map { entities ->
-            entities.map { it.toJournal() }
-        }
-    }
+    ): Flow<List<Journal>> = localDao.getJournals(query, isBookmarked, isDraft, hasLocation, hasSong)
+        .map { entities -> entities.map { it.toJournal() } }
+
+    override fun getUniqueTags(): Flow<List<String>> = localDao.getAllUniqueTags()
+
+    override fun getTagSuggestions(query: String): Flow<List<String>> = localDao.getTagSuggestions(query)
 }
