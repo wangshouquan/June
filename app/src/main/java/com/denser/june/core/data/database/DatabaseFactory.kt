@@ -13,14 +13,16 @@ class DatabaseFactory(
         val appContext = context.applicationContext
         val dbFile = appContext.getDatabasePath(JournalDatabase.DB_NAME)
 
-        val builder = Room.databaseBuilder(
+        return Room.databaseBuilder(
             appContext,
             JournalDatabase::class.java,
             dbFile.absolutePath
-        )
-        if (BuildConfig.DEBUG) {
-            builder.fallbackToDestructiveMigration(dropAllTables = true)
+        ).apply {
+            addMigrations(DatabaseMigrations.MIGRATION_1_2)
+
+            if (BuildConfig.DEBUG) {
+                fallbackToDestructiveMigration(dropAllTables = false)
+            }
         }
-        return builder
     }
 }

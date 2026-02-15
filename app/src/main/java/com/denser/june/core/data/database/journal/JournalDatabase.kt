@@ -3,7 +3,15 @@ package com.denser.june.core.data.database.journal
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
-@Database(entities = [JournalEntity::class], version = 1, exportSchema = true)
+@Database(
+    entities = [
+        JournalEntity::class,
+        TagEntity::class,
+        JournalTagCrossRef::class
+    ],
+    version = 2,
+    exportSchema = true
+)
 abstract class JournalDatabase : RoomDatabase() {
     abstract fun journalDao(): JournalDao
 
