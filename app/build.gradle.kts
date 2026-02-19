@@ -18,9 +18,9 @@ val appNamespace = "com.denser.june"
 val apkNamePrefix = "june"
 
 val versionMajor = 0
-val versionMinor = 3
+val versionMinor = 4
 val versionPatch = 0
-val appVersionCode = 3
+val appVersionCode = 4
 val appVersionName = "$versionMajor.$versionMinor.$versionPatch"
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -197,9 +197,10 @@ dependencies {
 
 
     // June
-    implementation(libs.maplibre.compose)        
-    implementation(libs.osmdroid)                
-    implementation(libs.gms.location)            
+    implementation(libs.maplibre.compose)
+    implementation(libs.maplibre.annotation)
+    implementation(libs.osmdroid)
+    implementation(libs.gms.location)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.coil.compose)
     implementation(libs.coil.video)
@@ -207,10 +208,10 @@ dependencies {
     implementation(libs.media3.ui)
     implementation(libs.media3.common)
     implementation(libs.androidx.palette)
-    implementation(libs.jsoup)                   
-    implementation(libs.json.path)               
+    implementation(libs.jsoup)
+    implementation(libs.json.path)
     implementation(libs.androidx.emoji2.emojipicker)
-    implementation(libs.androidx.biometric)      
+    implementation(libs.androidx.biometric)
 }
 aboutLibraries {
     export.excludeFields.add("generated")

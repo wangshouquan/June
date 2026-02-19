@@ -39,6 +39,7 @@ June is designed to be more than just text—it's a multimedia capsule of your l
 ### Capture Every Detail
 
 - **Multimedia Capsules:** Go beyond words by attaching **photos**, **videos**, and **precise locations** to any entry.
+- **Smart Organization:** Intelligently categorize your entries using three distinct tag groups: **Spaces**, **People**, and **Topics**.
 - **Soundtrack Support:** Paste a link from any major streaming platform (Spotify, Apple Music, etc.), and June automatically fetches the cover art and song details.
 - **Mood Tracking:** Tag entries with emojis to log your emotional journey and personal growth over time.
 
@@ -46,7 +47,7 @@ June is designed to be more than just text—it's a multimedia capsule of your l
 
 - **Unified Timeline:** Navigate your past through a Month View calendar. See your **media, songs, and locations** all in one place within a seamless flow.
 - **Visual Habits:** Keep your momentum going with calendar **streaks** and writing indicators that visualize your consistency.
-- **Smart Search:** Instantly locate memories by searching through content, dates, tags, or attached media.
+- **Smart Search & Filtering:** Instantly locate memories by searching through content and dates, or use the advanced filter menu to combine multiple tags (such as `@John` and `#Travel`) to retrieve highly specific entries.
 
 ### Secure & Styled
 
