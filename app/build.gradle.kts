@@ -198,7 +198,6 @@ dependencies {
 
     // June
     implementation(libs.maplibre.compose)
-    implementation(libs.maplibre.annotation)
     implementation(libs.osmdroid)
     implementation(libs.gms.location)
     implementation(libs.kotlinx.coroutines.play.services)

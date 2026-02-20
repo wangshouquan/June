@@ -22,6 +22,7 @@ object DatabaseMigrations {
                 )
             """.trimIndent())
             db.execSQL("CREATE INDEX IF NOT EXISTS `index_journal_tag_cross_ref_tagId` ON `journal_tag_cross_ref` (`tagId`)")
+            db.execSQL("ALTER TABLE `journals` ADD COLUMN `tags` TEXT NOT NULL DEFAULT ''")
         }
     }
 }
