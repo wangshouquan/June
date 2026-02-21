@@ -18,23 +18,25 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.denser.june.core.utils.*
+import com.denser.june.presentation.navigation.AppNavigator
+import com.denser.june.presentation.navigation.Route
 import com.denser.june.presentation.screens.home.timeline.components.TimelineCalendarPage
 import com.denser.june.presentation.screens.home.timeline.components.TimelineMonthStrip
 import com.denser.june.presentation.screens.home.timeline.components.TimelineTabs
 import com.denser.june.presentation.utils.UiUtils
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import java.time.LocalDate
-import java.time.YearMonth
-import java.time.temporal.WeekFields
-import java.util.Locale
 import kotlin.math.abs
 
 @Composable
 fun TimelinePage(
     viewModel: TimelineVM = koinViewModel()
 ) {
+    val navigator = koinInject<AppNavigator>()
     val currentMonth by viewModel.currentMonth.collectAsStateWithLifecycle()
     val journalsInMonth by viewModel.journalsInMonth.collectAsStateWithLifecycle()
     val isCalendarExpanded by viewModel.isCalendarExpanded.collectAsStateWithLifecycle()
@@ -180,7 +182,11 @@ fun TimelinePage(
                         yearMonth = monthForPage,
                         selectedDate = selectedDate,
                         journals = pageJournals,
-                        onDateSelected = { selectedDate = it }
+                        onDateSelected = { clickedDate ->
+                            selectedDate = clickedDate
+                            val dateMillis = combineDateAndTime(clickedDate, null)
+                            navigator.navigateTo(Route.Editor(initialDate = dateMillis))
+                        }
                     )
                 }
             }
@@ -194,18 +200,4 @@ fun TimelinePage(
             bottomPadding = UiUtils.BOTTOM_BAR_PADDING
         )
     }
-}
-
-fun getWeeksInMonth(yearMonth: YearMonth): Int {
-    val firstDay = yearMonth.atDay(1)
-    val lastDay = yearMonth.atEndOfMonth()
-    val weekFields = WeekFields.of(Locale.getDefault())
-
-    val weekOne = firstDay.get(weekFields.weekOfWeekBasedYear())
-    var weekLast = lastDay.get(weekFields.weekOfWeekBasedYear())
-
-    if (weekLast < weekOne) {
-        weekLast += 52
-    }
-    return (weekLast - weekOne) + 1
 }

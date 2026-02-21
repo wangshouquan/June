@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.navigation.Route
 import com.denser.june.presentation.components.JuneAppBarType
@@ -22,6 +23,8 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 import com.denser.june.R
+import com.denser.june.presentation.screens.home.tags.TagsVM
+import org.koin.compose.viewmodel.koinViewModel
 
 enum class HomeTab(val label: String, val iconRes: Int, val filledIconRes: Int) {
     Journals("Journals", R.drawable.home_24px, R.drawable.home_24px_fill),
@@ -35,6 +38,9 @@ fun HomeScreen() {
     val navigator = koinInject<AppNavigator>()
     val pagerState = rememberPagerState(pageCount = { HomeTab.entries.size })
     val scope = rememberCoroutineScope()
+
+    val tagsVM: TagsVM = koinViewModel()
+    val activeTag by tagsVM.selectedPrimaryTag.collectAsStateWithLifecycle()
 
     BackHandler(enabled = pagerState.currentPage != 0) {
         scope.launch { pagerState.animateScrollToPage(0) }
@@ -102,7 +108,27 @@ fun HomeScreen() {
         }
         HomeBottomBar(
             pagerState = pagerState,
-            onFabClick = { navigator.navigateTo(Route.Editor(null), isSingleTop = true) }
+            onFabClick = {
+                val currentTab = HomeTab.entries[pagerState.currentPage]
+                handleFabClick(
+                    currentTab = currentTab,
+                    activeTag = activeTag,
+                    navigator = navigator
+                )
+            }
         )
     }
+}
+
+private fun handleFabClick(
+    currentTab: HomeTab,
+    activeTag: String?,
+    navigator: AppNavigator
+) {
+    val route = if (currentTab == HomeTab.Tags && activeTag != null) {
+        Route.Editor(initialTags = listOf(activeTag))
+    } else {
+        Route.Editor()
+    }
+    navigator.navigateTo(route, isSingleTop = true)
 }
