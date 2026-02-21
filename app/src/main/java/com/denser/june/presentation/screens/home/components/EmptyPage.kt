@@ -29,7 +29,7 @@ fun EmptyPage(
             modifier = Modifier
                 .size(100.dp)
                 .clip(RoundedCornerShape(32.dp))
-                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
+                .background(MaterialTheme.colorScheme.surfaceContainer),
             contentAlignment = Alignment.Center
         ) {
             Icon(

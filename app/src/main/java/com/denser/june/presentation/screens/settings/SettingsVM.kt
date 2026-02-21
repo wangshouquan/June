@@ -32,56 +32,42 @@ class SettingsVM(
 
     private val _localState = MutableStateFlow(SettingsState())
 
-    private val colorPrefsFlow = combine(
-        prefs.getSeedColorFlow(),
-        prefs.getAppThemePrefFlow(),
-        prefs.getAmoledPrefFlow(),
-        prefs.getPaletteStyle()
-    ) { seed, appTheme, amoled, style ->
-        ColorPrefs(seed, appTheme, amoled, style)
-    }
+    val state = combine<Any?, SettingsState>(
+        listOf(
+            _localState,
+            prefs.getSeedColorFlow(),
+            prefs.getAppThemePrefFlow(),
+            prefs.getAmoledPrefFlow(),
+            prefs.getPaletteStyle(),
+            prefs.getMaterialYouFlow(),
+            prefs.getFontFlow(),
+            prefs.getOnboardingDoneFlow(),
+            prefs.getAppLockFlow(),
+            prefs.getLockTypeFlow(),
+            prefs.getPinHashFlow()
+        )
+    ) { array ->
+        val local = array[0] as SettingsState
 
-    private val uiPrefsFlow = combine(
-        prefs.getMaterialYouFlow(),
-        prefs.getFontFlow(),
-        prefs.getOnboardingDoneFlow()
-    ) { matYou, font, onboarding ->
-        UiPrefs(matYou, font, onboarding)
-    }
-
-    private val securityPrefsFlow = combine(
-        prefs.getAppLockFlow(),
-        prefs.getLockTypeFlow(),
-        prefs.getPinHashFlow()
-    ) { appLock, lockType, pinHash ->
-        SecurityPrefs(appLock, lockType, pinHash)
-    }
-
-    val state = combine(
-        _localState,
-        colorPrefsFlow,
-        uiPrefsFlow,
-        securityPrefsFlow
-    ) { local, colors, ui, security ->
         local.copy(
-            onBoardingDone = ui.onboardingDone,
-            isAppLockEnabled = security.appLock,
-            lockType = security.lockType,
-            pinHash = security.pinHash,
+            onBoardingDone = array[7] as Boolean,
+            isAppLockEnabled = array[8] as Boolean,
+            lockType = array[9] as LockType,
+            pinHash = array[10] as String?,
 
             appTheme = local.appTheme.copy(
-                seedColor = colors.seed,
-                themeMode = colors.themeMode,
-                withAmoled = colors.amoled,
-                style = colors.style,
-                materialTheme = ui.matYou,
-                font = ui.font,
+                seedColor = array[1] as Int,
+                themeMode = array[2] as ThemeMode,
+                withAmoled = array[3] as Boolean,
+                style = array[4] as PaletteStyle,
+                materialTheme = array[5] as Boolean,
+                font = array[6] as Fonts,
             )
         )
     }.stateIn(
-        viewModelScope,
-        SharingStarted.Companion.WhileSubscribed(5000),
-        SettingsState()
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SettingsState()
     )
 
     fun onAction(action: SettingsAction) {
@@ -136,23 +122,4 @@ class SettingsVM(
             }
         }
     }
-
-    private data class ColorPrefs(
-        val seed: Int,
-        val themeMode: ThemeMode,
-        val amoled: Boolean,
-        val style: PaletteStyle
-    )
-
-    private data class UiPrefs(
-        val matYou: Boolean,
-        val font: Fonts,
-        val onboardingDone: Boolean
-    )
-
-    private data class SecurityPrefs(
-        val appLock: Boolean,
-        val lockType: LockType,
-        val pinHash: String?
-    )
 }

@@ -38,6 +38,9 @@ fun HomeBottomBar(
     ) {
         HorizontalFloatingToolbar(
             expanded = true,
+            colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                toolbarContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+            ),
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = onFabClick,

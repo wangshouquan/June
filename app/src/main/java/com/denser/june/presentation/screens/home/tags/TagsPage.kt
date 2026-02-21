@@ -57,7 +57,6 @@ fun TagsPage() {
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
-
             PrimaryTabRow(
                 selectedTabIndex = selectedCategory.ordinal,
                 containerColor = MaterialTheme.colorScheme.surface,
