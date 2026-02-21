@@ -8,7 +8,11 @@ sealed interface Route {
     data object Home : Route
 
     @Serializable
-    data class Journal(val journalId: Long? = null) : Route
+    data class Editor(
+        val journalId: Long? = null,
+        val initialDate: Long? = null,
+        val initialTags: List<String>? = null
+    ) : Route
 
     @Serializable
     data class JournalMedia(val journalId: Long) : Route

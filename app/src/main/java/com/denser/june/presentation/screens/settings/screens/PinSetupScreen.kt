@@ -11,14 +11,16 @@ import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.components.PinLockScreen
 import com.denser.june.presentation.screens.settings.SettingsAction
 import com.denser.june.core.utils.SecurityUtils
+import com.denser.june.presentation.screens.settings.SettingsVM
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 private enum class SetupStep { CREATE, CONFIRM }
 
 @Composable
-fun PinSetupScreen(
-    onAction: (SettingsAction) -> Unit
-) {
+fun PinSetupScreen() {
+    val settingsVM: SettingsVM = koinViewModel()
+    val onAction = settingsVM::onAction
     val navigator = koinInject<AppNavigator>()
     var step by remember { mutableStateOf(SetupStep.CREATE) }
     var firstPin by remember { mutableStateOf("") }

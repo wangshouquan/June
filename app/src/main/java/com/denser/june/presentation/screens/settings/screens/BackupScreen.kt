@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.denser.june.core.domain.backup.ExportState
 import com.denser.june.core.domain.backup.RestoreState
 import com.denser.june.presentation.navigation.AppNavigator
@@ -29,15 +30,17 @@ import org.koin.compose.koinInject
 
 import com.denser.june.R
 import com.denser.june.core.domain.backup.RestoreFailedException
+import com.denser.june.presentation.screens.settings.SettingsVM
 import com.denser.june.presentation.screens.settings.section.SettingSection
 import com.denser.june.presentation.screens.settings.section.SettingsItem
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BackupScreen(
-    state: SettingsState,
-    onAction: (SettingsAction) -> Unit
-) {
+fun BackupScreen() {
+    val settingsVM: SettingsVM = koinViewModel()
+    val state = settingsVM.state.collectAsStateWithLifecycle().value
+    val onAction = settingsVM::onAction
     val context = LocalContext.current
     val navigator = koinInject<AppNavigator>()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
