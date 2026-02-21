@@ -36,11 +36,21 @@ class EditorVM(
     init {
         if (initialJournalId != null) {
             loadJournal(initialJournalId)
+        } else {
+            val editorRoute = savedStateHandle.tryRoute<Route.Editor>()
+            if (editorRoute?.initialDate != null || editorRoute?.initialTags != null) {
+                _state.update { currentState ->
+                    currentState.copy(
+                        dateTime = editorRoute.initialDate ?: currentState.dateTime,
+                        tags = editorRoute.initialTags ?: currentState.tags
+                    )
+                }
+            }
         }
     }
 
     private fun SavedStateHandle.getJournalIdFromRoutes(): Long? {
-        return tryRoute<Route.Journal>()?.journalId
+        return tryRoute<Route.Editor>()?.journalId
             ?: tryRoute<Route.JournalMedia>()?.journalId
             ?: tryRoute<Route.JournalMediaDetail>()?.journalId
     }

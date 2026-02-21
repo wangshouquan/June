@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.denser.june.R
 import com.denser.june.core.domain.enums.LockType
 import com.denser.june.presentation.navigation.AppNavigator
@@ -42,17 +43,18 @@ import com.denser.june.presentation.navigation.Route
 import com.denser.june.presentation.components.JuneAppBarType
 import com.denser.june.presentation.components.JuneTopAppBar
 import com.denser.june.presentation.screens.settings.SettingsAction
-import com.denser.june.presentation.screens.settings.SettingsState
+import com.denser.june.presentation.screens.settings.SettingsVM
 import com.denser.june.presentation.screens.settings.section.SettingSection
 import com.denser.june.presentation.screens.settings.section.SettingsItem
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LockMethodScreen(
-    state: SettingsState,
-    onAction: (SettingsAction) -> Unit,
-) {
+fun LockMethodScreen() {
+    val settingsVM: SettingsVM = koinViewModel()
+    val state = settingsVM.state.collectAsStateWithLifecycle().value
+    val onAction = settingsVM::onAction
     val navigator = koinInject<AppNavigator>()
     var pendingAction by remember { mutableStateOf<(() -> Unit)?>(null) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

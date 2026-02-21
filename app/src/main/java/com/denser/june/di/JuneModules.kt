@@ -1,5 +1,6 @@
 package com.denser.june.di
 
+import com.denser.june.MainVM
 import com.denser.june.core.data.AppPreferencesImpl
 import com.denser.june.core.data.SongRepoImpl
 import com.denser.june.core.data.backup.ExportImpl
@@ -16,7 +17,7 @@ import com.denser.june.core.domain.SongRepo
 import com.denser.june.core.domain.backup.ExportRepo
 import com.denser.june.core.domain.backup.RestoreRepo
 import com.denser.june.presentation.navigation.AppNavigator
-import com.denser.june.presentation.navigation.AppNavigatorImpl
+import com.denser.june.presentation.navigation.JuneNavigator
 import com.denser.june.presentation.screens.home.journals.JournalsVM
 import com.denser.june.presentation.screens.editor.EditorVM
 import com.denser.june.presentation.screens.home.tags.TagsVM
@@ -50,6 +51,7 @@ val juneModules = module {
     single(named("AppPreferences")) { get<DatastoreFactory>().getPreferencesDataStore() }
     single { AppPreferencesImpl(get(named("AppPreferences"))) }.bind<AppPreferences>()
 
+    viewModelOf(::MainVM)
     viewModelOf(::SettingsVM)
     viewModelOf(::EditorVM)
     viewModelOf(::JournalsVM)
@@ -57,8 +59,8 @@ val juneModules = module {
     viewModelOf(::TimelineVM)
     viewModelOf(::SearchVM)
 
-    singleOf(::AppNavigatorImpl)
-    single<AppNavigator> { get<AppNavigatorImpl>() }
+    singleOf(::JuneNavigator)
+    single<AppNavigator> { get<JuneNavigator>() }
 
     single { OkHttpClient() }
     single {

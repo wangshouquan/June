@@ -102,7 +102,7 @@ fun HomeScreen() {
         }
         HomeBottomBar(
             pagerState = pagerState,
-            onFabClick = { navigator.navigateTo(Route.Journal(null), isSingleTop = true) }
+            onFabClick = { navigator.navigateTo(Route.Editor(null), isSingleTop = true) }
         )
     }
 }

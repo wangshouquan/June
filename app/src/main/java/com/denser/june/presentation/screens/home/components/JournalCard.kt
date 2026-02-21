@@ -48,7 +48,7 @@ fun JournalCard(
             .height(84.dp)
             .clip(RoundedCornerShape(24.dp))
             .combinedClickable(
-                onClick = { navigator.navigateTo(Route.Journal(journal.id), isSingleTop = true) },
+                onClick = { navigator.navigateTo(Route.Editor(journal.id), isSingleTop = true) },
                 onLongClick = {}
             ),
         colors = CardDefaults.cardColors(
@@ -156,7 +156,7 @@ fun RecentJournalCard(
                 .combinedClickable(
                     onClick = {
                         navigator.navigateTo(
-                            Route.Journal(journal.id),
+                            Route.Editor(journal.id),
                             isSingleTop = true
                         )
                     },
