@@ -11,6 +11,7 @@ import com.denser.june.R
 import com.denser.june.core.domain.JournalRepo
 import com.denser.june.core.domain.data_classes.Journal
 import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.utils.combineDateAndTime
 import com.denser.june.core.utils.toYearMonth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -19,6 +20,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.time.LocalTime
 import java.time.YearMonth
 import java.time.ZoneId
 
@@ -52,9 +54,8 @@ class TimelineVM(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val journalsInMonth: StateFlow<List<Journal>> = _currentMonth.flatMapLatest { month ->
-        val start = month.atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        val end = month.atEndOfMonth().atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant()
-            .toEpochMilli()
+        val start = combineDateAndTime(month.atDay(1), null)
+        val end = combineDateAndTime(month.atEndOfMonth(), LocalTime.of(23, 59, 59))
         repo.getJournalsByDateRange(start, end)
     }.stateIn(
         scope = viewModelScope,
