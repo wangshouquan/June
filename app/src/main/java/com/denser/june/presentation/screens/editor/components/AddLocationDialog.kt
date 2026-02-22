@@ -381,9 +381,8 @@ fun MapBottomBar(
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         if (isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                strokeWidth = 2.dp
+                            ContainedLoadingIndicator(
+                                modifier = Modifier.size(32.dp)
                             )
                         } else {
                             val icon = when {
