@@ -1,6 +1,13 @@
 package com.denser.june.presentation.components
 
 import android.content.Intent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,14 +36,18 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -44,6 +55,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -52,6 +64,7 @@ import com.denser.june.R
 import com.denser.june.core.domain.data_classes.SongDetails
 import com.denser.june.presentation.utils.rememberDynamicThemeColors
 import ir.mahozad.multiplatform.wavyslider.material3.WavySlider
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -60,12 +73,37 @@ fun JuneSongPlayerCard(
     isPlaying: Boolean,
     isLoading: Boolean,
     sliderValue: Float,
+    isRepeatEnabled: Boolean,
     onPlayPause: () -> Unit,
     onSeek: (Float) -> Unit,
-    onSeekFinished: () -> Unit
+    onSeekFinished: () -> Unit,
+    onToggleRepeat: () -> Unit
 ) {
     val context = LocalContext.current
     val themeColors = rememberDynamicThemeColors(details.thumbnailUrl)
+
+    var rippleTrigger by remember { mutableIntStateOf(0) }
+    val rippleScale = remember { Animatable(1f) }
+    val rippleAlpha = remember { Animatable(0f) }
+
+    LaunchedEffect(rippleTrigger) {
+        if (rippleTrigger > 0) {
+            rippleScale.snapTo(1f)
+            rippleAlpha.snapTo(0.7f)
+            launch {
+                rippleScale.animateTo(
+                    targetValue = 24f,
+                    animationSpec = tween(durationMillis = 1000, easing = LinearOutSlowInEasing)
+                )
+            }
+            launch {
+                rippleAlpha.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis = 1000, easing = LinearOutSlowInEasing)
+                )
+            }
+        }
+    }
 
     val availableLinks = remember(details.links) {
         listOf(
@@ -98,7 +136,20 @@ fun JuneSongPlayerCard(
                         .fillMaxSize()
                         .alpha(0.25f)
                 )
-
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 36.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .scale(rippleScale.value)
+                            .alpha(rippleAlpha.value)
+                            .background(themeColors.primaryContainer.copy(alpha = 0.5f), CircleShape)
+                    )
+                }
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -167,6 +218,7 @@ fun JuneSongPlayerCard(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
+                            modifier = Modifier.padding(end = 80.dp),
                             text = details.title,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
@@ -211,16 +263,44 @@ fun JuneSongPlayerCard(
                             ),
                             modifier = Modifier.weight(1f)
                         )
-                        Spacer(Modifier.width(16.dp))
-                        PlayPauseButton(
-                            isPlaying = isPlaying,
-                            isLoading = isLoading,
-                            enabled = details.previewUrl != null,
-                            onClick = onPlayPause,
-                            containerColor = themeColors.primaryContainer,
-                            contentColor = themeColors.onPrimaryContainer
-                        )
+                        Spacer(Modifier.width(12.dp))
+                        FilledIconToggleButton(
+                            checked = isRepeatEnabled,
+                            onCheckedChange = { onToggleRepeat() },
+                            modifier = Modifier.size(32.dp),
+                            shapes = IconButtonDefaults.toggleableShapes(),
+                            colors = IconButtonDefaults.filledIconToggleButtonColors(
+                                containerColor = Color.Transparent,
+                                checkedContainerColor = themeColors.primaryContainer
+                            )
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.repeat_24px),
+                                contentDescription = "Toggle Repeat",
+                                tint = if (isRepeatEnabled) themeColors.onPrimaryContainer else themeColors.onSurface,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
+                }
+
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 24.dp)
+                ) {
+                    PlayPauseButton(
+                        isPlaying = isPlaying,
+                        isLoading = isLoading,
+                        enabled = details.previewUrl != null,
+                        onClick = {
+                            rippleTrigger++
+                            onPlayPause()
+                        },
+                        containerColor = themeColors.primaryContainer,
+                        contentColor = themeColors.onPrimaryContainer,
+                    )
                 }
             }
         }
@@ -293,16 +373,27 @@ fun PlayPauseButton(
     enabled: Boolean,
     onClick: () -> Unit,
     containerColor: Color,
-    contentColor: Color
+    contentColor: Color,
 ) {
+    val buttonScale = remember { Animatable(1f) }
+    val coroutineScope = rememberCoroutineScope()
+
     FilledIconToggleButton(
         checked = isPlaying,
-        onCheckedChange = { if (!isLoading) onClick() },
+        onCheckedChange = {
+            if (!isLoading) {
+                coroutineScope.launch {
+                    buttonScale.animateTo(1.05f, tween(300))
+                    buttonScale.animateTo(1f, spring(dampingRatio = Spring.DampingRatioMediumBouncy))
+                }
+                onClick()
+            }
+        },
         enabled = enabled,
-        modifier = Modifier
-            .size(width = 56.dp, height = 40.dp),
-        shapes = IconButtonDefaults.toggleableShapes(),
-
+        modifier = Modifier.scale(buttonScale.value).size(width = 64.dp, height = 48.dp),
+        shapes = IconButtonDefaults.toggleableShapes(
+            checkedShape = RoundedCornerShape(16.dp)
+        ),
         colors = IconButtonDefaults.filledIconToggleButtonColors(
             containerColor = containerColor,
             contentColor = contentColor,
@@ -314,7 +405,7 @@ fun PlayPauseButton(
     ) {
         if (isLoading) {
             CircularWavyProgressIndicator(
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(32.dp),
                 color = contentColor,
             )
         } else {
@@ -323,6 +414,7 @@ fun PlayPauseButton(
                     if (isPlaying) R.drawable.pause_24px else R.drawable.play_arrow_24px
                 ),
                 contentDescription = if (isPlaying) "Pause" else "Play",
+                modifier = Modifier.size(32.dp)
             )
         }
     }

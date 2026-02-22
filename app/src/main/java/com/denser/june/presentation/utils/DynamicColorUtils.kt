@@ -17,7 +17,6 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import androidx.core.graphics.toColorInt
 
 data class DynamicThemeColors(
     val surface: Color,
@@ -65,33 +64,45 @@ fun rememberDynamicThemeColors(
             if (bitmap != null) {
                 val palette = Palette.from(bitmap).generate()
 
-                val dominantInt = palette.getDominantColor(android.graphics.Color.DKGRAY)
-                val surfaceInt = ColorUtils.blendARGB(dominantInt, android.graphics.Color.BLACK, 0.85f)
+                val dominantSwatch = palette.dominantSwatch
+                val vibrantSwatch = palette.vibrantSwatch
+                    ?: palette.lightVibrantSwatch
+                    ?: palette.darkVibrantSwatch
+                    ?: dominantSwatch
 
-                val vibrantSwatch = palette.vibrantSwatch ?: palette.lightVibrantSwatch ?: palette.darkVibrantSwatch
-
-                val accentInt = if (vibrantSwatch != null) {
-                    val hsl = floatArrayOf(0f, 0f, 0f)
-                    ColorUtils.colorToHSL(vibrantSwatch.rgb, hsl)
-                    if (hsl[1] < 0.25f) "#E0E0E0".toColorInt()
-                    else vibrantSwatch.rgb
+                val bgHsl = floatArrayOf(0f, 0f, 0f)
+                if (dominantSwatch != null) {
+                    ColorUtils.colorToHSL(dominantSwatch.rgb, bgHsl)
                 } else {
-                    "#E0E0E0".toColorInt()
+                    ColorUtils.colorToHSL(android.graphics.Color.DKGRAY, bgHsl)
+                }
+                bgHsl[1] = (bgHsl[1] * 0.4f).coerceAtMost(0.4f)
+                bgHsl[2] = 0.12f
+                val surfaceColor = Color(ColorUtils.HSLToColor(bgHsl))
+
+                val accentHsl = floatArrayOf(0f, 0f, 0f)
+                if (vibrantSwatch != null) {
+                    ColorUtils.colorToHSL(vibrantSwatch.rgb, accentHsl)
+                } else {
+                    ColorUtils.colorToHSL(android.graphics.Color.LTGRAY, accentHsl)
                 }
 
-                val onAccentInt = if (ColorUtils.calculateLuminance(accentInt) > 0.5) {
-                    android.graphics.Color.BLACK
-                } else {
-                    android.graphics.Color.WHITE
-                }
+                accentHsl[1] = accentHsl[1].coerceAtLeast(0.85f)
+                accentHsl[2] = 0.65f
+                val primaryContainerColor = Color(ColorUtils.HSLToColor(accentHsl))
+
+                val onAccentHsl = accentHsl.copyOf()
+                onAccentHsl[1] = (onAccentHsl[1] * 0.8f).coerceAtMost(0.5f)
+                onAccentHsl[2] = 0.15f
+                val onPrimaryContainerColor = Color(ColorUtils.HSLToColor(onAccentHsl))
 
                 themeColors = DynamicThemeColors(
-                    surface = Color(surfaceInt),
-                    onSurface = Color.White, 
-                    onSurfaceVariant = Color(0xFFD1D1D1), 
-                    primaryContainer = Color(accentInt),
-                    onPrimaryContainer = Color(onAccentInt),
-                    secondaryContainer = Color(0x33FFFFFF), 
+                    surface = surfaceColor,
+                    onSurface = Color.White,
+                    onSurfaceVariant = Color.White.copy(alpha = 0.7f),
+                    primaryContainer = primaryContainerColor,
+                    onPrimaryContainer = onPrimaryContainerColor,
+                    secondaryContainer = Color.White.copy(alpha = 0.15f),
                     onSecondaryContainer = Color.White
                 )
             }
