@@ -119,10 +119,34 @@ interface JournalDao {
     @Query("DELETE FROM journal_tag_cross_ref WHERE id = :journalId")
     suspend fun deleteTagsForJournal(journalId: Long)
 
-    @Query("SELECT name FROM tags WHERE name LIKE :query || '%' ORDER BY name ASC")
+    @Query("DELETE FROM journal_tag_cross_ref")
+    suspend fun deleteAllCrossRefs()
+
+    @Query("DELETE FROM tags")
+    suspend fun deleteAllTags()
+
+    @Query("DELETE FROM tags WHERE tagId NOT IN (SELECT DISTINCT tagId FROM journal_tag_cross_ref)")
+    suspend fun deleteOrphanedTags()
+
+    @Query("""
+        SELECT t.name 
+        FROM tags t
+        LEFT JOIN journal_tag_cross_ref ref ON t.tagId = ref.tagId
+        LEFT JOIN journals j ON ref.id = j.id
+        WHERE t.name LIKE :query || '%'
+        GROUP BY t.tagId
+        ORDER BY MAX(j.dateTime) DESC, t.name ASC
+    """)
     fun getTagSuggestions(query: String): Flow<List<String>>
 
-    @Query("SELECT name FROM tags ORDER BY name ASC")
+    @Query("""
+        SELECT t.name 
+        FROM tags t
+        LEFT JOIN journal_tag_cross_ref ref ON t.tagId = ref.tagId
+        LEFT JOIN journals j ON ref.id = j.id
+        GROUP BY t.tagId
+        ORDER BY MAX(j.dateTime) DESC, t.name ASC
+    """)
     fun getAllUniqueTags(): Flow<List<String>>
 
     @Query("""
