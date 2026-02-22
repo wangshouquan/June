@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +29,6 @@ import com.denser.june.core.domain.data_classes.SongDetails
 import com.denser.june.core.utils.toDayOfMonth
 import com.denser.june.core.utils.toShortMonth
 import com.denser.june.presentation.components.ListenDropdownMenu
-import com.denser.june.presentation.components.PlayPauseButton
 import com.denser.june.presentation.utils.rememberDynamicThemeColors
 import com.denser.june.presentation.screens.home.timeline.TimelineVM
 import org.koin.compose.viewmodel.koinViewModel
@@ -173,7 +173,7 @@ fun DockedMiniPlayer(
                     )
                 }
                 Spacer(modifier = Modifier.width(12.dp))
-                PlayPauseButton(
+                SmallPlayPauseButton(
                     isPlaying = isPlaying,
                     isLoading = isLoading,
                     enabled = true,
@@ -300,6 +300,51 @@ fun MusicListTile(
                         )
                     }
                 }
+            )
+        }
+    }
+}
+
+
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun SmallPlayPauseButton(
+    isPlaying: Boolean,
+    isLoading: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+    containerColor: Color,
+    contentColor: Color,
+    modifier: Modifier = Modifier
+) {
+    FilledIconToggleButton(
+        checked = isPlaying,
+        onCheckedChange = { if (!isLoading) onClick() },
+        enabled = enabled,
+        modifier = modifier.size(width = 52.dp, height = 40.dp),
+        shapes = IconButtonDefaults.toggleableShapes(),
+        colors = IconButtonDefaults.filledIconToggleButtonColors(
+            containerColor = containerColor,
+            contentColor = contentColor,
+            checkedContainerColor = containerColor,
+            checkedContentColor = contentColor,
+            disabledContainerColor = containerColor.copy(alpha = 0.5f),
+            disabledContentColor = contentColor.copy(alpha = 0.5f)
+        )
+    ) {
+        if (isLoading) {
+            CircularWavyProgressIndicator(
+                modifier = Modifier.size(24.dp),
+                color = contentColor,
+            )
+        } else {
+            Icon(
+                painter = painterResource(
+                    if (isPlaying) R.drawable.pause_24px else R.drawable.play_arrow_24px
+                ),
+                contentDescription = if (isPlaying) "Pause" else "Play",
+                modifier = Modifier.size(24.dp)
             )
         }
     }

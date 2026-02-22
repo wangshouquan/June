@@ -70,9 +70,11 @@ fun JournalSongItem(
                         isPlaying = playerState.isPlaying,
                         isLoading = playerState.isLoading,
                         sliderValue = playerState.sliderValue,
+                        isRepeatEnabled = playerState.isRepeatEnabled,
                         onPlayPause = playerState.onPlayPause,
                         onSeek = playerState.onSeek,
                         onSeekFinished = playerState.onSeekFinished,
+                        onToggleRepeat = playerState.onToggleRepeat
                     )
 
                     if (showMenu) {

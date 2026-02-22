@@ -12,9 +12,11 @@ data class SongPlayerState(
     val isLoading: Boolean,
     val sliderValue: Float,
     val isSeeking: Boolean,
+    val isRepeatEnabled: Boolean,
     val onPlayPause: () -> Unit,
     val onSeek: (Float) -> Unit,
-    val onSeekFinished: () -> Unit
+    val onSeekFinished: () -> Unit,
+    val onToggleRepeat: () -> Unit
 )
 
 @Composable
@@ -30,6 +32,7 @@ fun rememberSongPlayerState(
     var isLoading by remember { mutableStateOf(false) }
     var sliderValue by remember { mutableFloatStateOf(0f) }
     var isSeeking by remember { mutableStateOf(false) }
+    var isRepeatEnabled by remember { mutableStateOf(false) }
 
     if (exoPlayer != null) {
         DisposableEffect(exoPlayer) {
@@ -41,10 +44,12 @@ fun rememberSongPlayerState(
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     isLoading = playbackState == Player.STATE_BUFFERING
                     if (playbackState == Player.STATE_ENDED) {
-                        isPlaying = false
-                        sliderValue = 0f
-                        exoPlayer.seekTo(0)
-                        exoPlayer.pause()
+                        if (!isRepeatEnabled) {
+                            isPlaying = false
+                            sliderValue = 0f
+                            exoPlayer.seekTo(0)
+                            exoPlayer.pause()
+                        }
                     }
                 }
             }
@@ -84,16 +89,24 @@ fun rememberSongPlayerState(
         Unit
     }
 
-    return remember(exoPlayer, isPlaying, isLoading, sliderValue, isSeeking) {
+    val onToggleRepeat = {
+        isRepeatEnabled = !isRepeatEnabled
+        exoPlayer?.repeatMode = if (isRepeatEnabled) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_OFF
+        Unit
+    }
+
+    return remember(exoPlayer, isPlaying, isLoading, sliderValue, isSeeking, isRepeatEnabled) {
         SongPlayerState(
             exoPlayer = exoPlayer,
             isPlaying = isPlaying,
             isLoading = isLoading,
             sliderValue = sliderValue,
             isSeeking = isSeeking,
+            isRepeatEnabled = isRepeatEnabled,
             onPlayPause = onPlayPause,
             onSeek = onSeek,
-            onSeekFinished = onSeekFinished
+            onSeekFinished = onSeekFinished,
+            onToggleRepeat = onToggleRepeat
         )
     }
 }

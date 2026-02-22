@@ -10,10 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,7 +36,6 @@ fun AddSongSheet(
 
     val scope = rememberCoroutineScope()
     val clipboard = LocalClipboard.current
-    val context = LocalContext.current
 
     ModalBottomSheet(
         sheetState = sheetState,
@@ -57,6 +53,24 @@ fun AddSongSheet(
                 JuneFloatingActionBar(
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
+                    if (songDetails != null) {
+                        FilledIconButton(
+                            onClick = {
+                                onRemoveSong()
+                                songLink = ""
+                            },
+                            modifier = Modifier.size(40.dp),
+                            colors = IconButtonDefaults.filledIconButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                contentColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.delete_24px),
+                                contentDescription = "Delete"
+                            )
+                        }
+                    }
                     JuneFloatingAction(
                         onClick = {
                             scope.launch {
@@ -67,14 +81,24 @@ fun AddSongSheet(
                             }
                         },
                         label = "Paste",
-                        icon = { Icon(painterResource(R.drawable.content_paste_go_24px), contentDescription = null) },
+                        icon = {
+                            Icon(
+                                painterResource(R.drawable.content_paste_go_24px),
+                                contentDescription = null
+                            )
+                        },
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                     JuneFloatingAction(
                         onClick = onDismiss,
                         label = "Done",
-                        icon = { Icon(painterResource(R.drawable.check_24px), contentDescription = null) }
+                        icon = {
+                            Icon(
+                                painterResource(R.drawable.check_24px),
+                                contentDescription = null
+                            )
+                        }
                     )
                 }
             },
@@ -182,46 +206,18 @@ fun SongInputCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SongPreviewCard(
     songDetails: SongDetails?,
     isFetching: Boolean,
     onRemoveSong: () -> Unit
 ) {
-    Box {
-        JournalSongItem(
-            details = songDetails,
-            isFetching = isFetching,
-            onRemove = onRemoveSong,
-            onEdit = { }
-        )
-        if (!isFetching && songDetails != null) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 16.dp, bottom = 36.dp)
-            ) {
-                FilledIconButton(
-                    onClick = onRemoveSong,
-                    shape = IconButtonDefaults.largePressedShape,
-                    modifier = Modifier
-                        .size(56.dp)
-                        .alpha(0.8f),
-                    colors = IconButtonDefaults.iconButtonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.errorContainer,
-                        contentColor = MaterialTheme.colorScheme.onErrorContainer
-                    )
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.delete_24px),
-                        contentDescription = "Remove Song",
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-            }
-        }
-    }
+    JournalSongItem(
+        details = songDetails,
+        isFetching = isFetching,
+        onRemove = onRemoveSong,
+        onEdit = {}
+    )
 }
 
 @Composable
