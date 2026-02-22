@@ -29,6 +29,7 @@ class JournalRepository(
         withContext(Dispatchers.IO) {
             localDao.updateJournal(journal.toEntity())
             syncJournalTags(journal.id, journal.tags)
+            localDao.deleteOrphanedTags()
         }
     }
 
@@ -36,12 +37,15 @@ class JournalRepository(
         withContext(Dispatchers.IO) {
             localDao.deleteJournal(id)
             localDao.deleteTagsForJournal(id)
+            localDao.deleteOrphanedTags()
         }
     }
 
     override suspend fun deleteAllJournals() {
         withContext(Dispatchers.IO) {
             localDao.deleteAllJournals()
+            localDao.deleteAllCrossRefs()
+            localDao.deleteAllTags()
         }
     }
 
@@ -74,7 +78,8 @@ class JournalRepository(
         localDao.getJournalsByTagName(tagName).map { entities -> entities.map { it.toJournal() } }
 
     override fun getJournalsByDateRange(startDate: Long, endDate: Long): Flow<List<Journal>> =
-        localDao.getJournalsByDateRange(startDate, endDate).map { entities -> entities.map { it.toJournal() } }
+        localDao.getJournalsByDateRange(startDate, endDate)
+            .map { entities -> entities.map { it.toJournal() } }
 
     override fun getFilteredJournals(
         query: String,
@@ -83,12 +88,14 @@ class JournalRepository(
         hasLocation: Boolean?,
         hasSong: Boolean?,
         hasMedia: Boolean?
-    ): Flow<List<Journal>> = localDao.getJournals(query, isBookmarked, isDraft, hasLocation, hasSong, hasMedia)
-        .map { entities -> entities.map { it.toJournal() } }
+    ): Flow<List<Journal>> =
+        localDao.getJournals(query, isBookmarked, isDraft, hasLocation, hasSong, hasMedia)
+            .map { entities -> entities.map { it.toJournal() } }
 
     override fun getUniqueTags(): Flow<List<String>> = localDao.getAllUniqueTags()
 
-    override fun getTagSuggestions(query: String): Flow<List<String>> = localDao.getTagSuggestions(query)
+    override fun getTagSuggestions(query: String): Flow<List<String>> =
+        localDao.getTagSuggestions(query)
 
     override fun getTagCounts(): Flow<Map<String, Int>> {
         return localDao.getAllTagCounts()
@@ -112,7 +119,8 @@ class JournalRepository(
                 val affectedJournals = localDao.getJournalsByTagNameSync(oldName)
                 affectedJournals.forEach { entity ->
                     val journal = entity.toJournal()
-                    val updatedTags = journal.tags.map { if (it == oldName) newName else it }.distinct()
+                    val updatedTags =
+                        journal.tags.map { if (it == oldName) newName else it }.distinct()
                     updateJournal(journal.copy(tags = updatedTags))
                 }
                 localDao.deleteTag(oldName)
@@ -129,6 +137,7 @@ class JournalRepository(
             }
         }
     }
+
     override suspend fun deleteTag(tagName: String) {
         withContext(Dispatchers.IO) {
             val affectedJournals = localDao.getJournalsByTagNameSync(tagName)
