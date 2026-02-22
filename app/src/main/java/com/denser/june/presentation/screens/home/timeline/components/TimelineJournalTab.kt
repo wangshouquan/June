@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -52,19 +53,21 @@ fun TimelineJournalTab(
         }
     }
 }
-
 @Composable
 fun TimelineJournalTile(
     journal: Journal,
     onClick: () -> Unit
 ) {
     val wordCount = remember(journal.content) {
-        if (journal.content.isBlank()) 0
-        else journal.content.trim().split("\\s+".toRegex()).size
+        val trimmed = journal.content.trim()
+        if (trimmed.isEmpty()) 0
+        else trimmed.split("\\s+".toRegex()).size
     }
-    val hasMedia = remember(journal.images) { journal.images.isNotEmpty() }
+    val wordText = if (wordCount == 1) "word" else "words"
+    val mediaCount = remember(journal.images) { journal.images.size }
     val hasMusic = remember(journal.songDetails) { journal.songDetails != null }
     val hasLocation = remember(journal.location) { journal.location != null }
+    val tagCount = remember(journal.tags) { journal.tags.size }
 
     Surface(
         modifier = Modifier
@@ -141,50 +144,79 @@ fun TimelineJournalTile(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = "$wordCount words",
+                        text = "$wordCount $wordText",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        fontSize = 10.sp
+                        fontSize = 11.sp
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (hasMedia) {
-                            Icon(
-                                painter = painterResource(R.drawable.photo_24px),
-                                contentDescription = "Media",
-                                tint = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.size(14.dp)
-                            )
-                        }
-                        if (hasMusic) {
-                            Icon(
-                                painter = painterResource(R.drawable.music_note_24px),
-                                contentDescription = "Music",
-                                tint = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.size(14.dp)
-                            )
-                        }
-                        if (hasLocation) {
-                            Icon(
-                                painter = painterResource(R.drawable.location_on_24px),
-                                contentDescription = "Location",
-                                tint = MaterialTheme.colorScheme.secondary,
-                                modifier = Modifier.size(14.dp)
-                            )
-                        }
+                        MetadataBadge(
+                            show = mediaCount > 0,
+                            icon = R.drawable.photo_24px,
+                            label = if (mediaCount > 1) "$mediaCount" else null
+                        )
+                        MetadataBadge(
+                            show = hasMusic,
+                            icon = R.drawable.music_note_24px
+                        )
+                        MetadataBadge(
+                            show = hasLocation,
+                            icon = R.drawable.location_on_24px
+                        )
+                        MetadataBadge(
+                            show = tagCount > 0,
+                            icon = R.drawable.sell_24px,
+                            label = "$tagCount"
+                        )
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MetadataBadge(
+    show: Boolean,
+    icon: Int,
+    label: String? = null
+) {
+    if (!show) return
+
+    Surface(
+        color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.5f),
+        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        shape = CircleShape
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = null,
+                modifier = Modifier.size(12.dp)
+            )
+            if (label != null) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

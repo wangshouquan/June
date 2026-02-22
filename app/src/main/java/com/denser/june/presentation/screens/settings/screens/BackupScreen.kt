@@ -35,7 +35,7 @@ import com.denser.june.presentation.screens.settings.section.SettingSection
 import com.denser.june.presentation.screens.settings.section.SettingsItem
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun BackupScreen() {
     val settingsVM: SettingsVM = koinViewModel()
@@ -170,10 +170,9 @@ fun BackupScreen() {
                             enabled = state.exportState !is ExportState.Exporting
                         ) {
                             if (state.exportState is ExportState.Exporting) {
-                                CircularProgressIndicator(
+                                CircularWavyProgressIndicator(
                                     modifier = Modifier.size(20.dp),
                                     color = MaterialTheme.colorScheme.onPrimary,
-                                    strokeWidth = 2.dp
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Creating Backup...")
@@ -214,9 +213,8 @@ fun BackupScreen() {
                             enabled = state.restoreState !is RestoreState.Restoring
                         ) {
                             if (state.restoreState is RestoreState.Restoring) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(20.dp),
-                                    strokeWidth = 2.dp
+                                CircularWavyProgressIndicator(
+                                    modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Restoring...")
