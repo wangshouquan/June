@@ -46,6 +46,7 @@ fun TimelinePage(
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
 
+    val nonDraftJournalsInMonth = journalsInMonth.filter { !it.isDraft }
     val weeksInMonth = remember(currentMonth) { getWeeksInMonth(currentMonth) }
     val maxCalendarHeight = remember(weeksInMonth) { (weeksInMonth * 44).dp + 24.dp }
     val maxCalendarHeightPx = with(density) { maxCalendarHeight.toPx() }
@@ -177,7 +178,7 @@ fun TimelinePage(
             ) { page ->
                 val monthForPage = viewModel.getMonthForPage(page)
                 if (abs(pagerState.currentPage - page) <= 1) {
-                    val pageJournals = if (monthForPage == currentMonth) journalsInMonth else emptyList()
+                    val pageJournals = if (monthForPage == currentMonth) nonDraftJournalsInMonth else emptyList()
                     TimelineCalendarPage(
                         yearMonth = monthForPage,
                         selectedDate = selectedDate,
@@ -194,7 +195,7 @@ fun TimelinePage(
 
         TimelineTabs(
             selectedTab = selectedTab,
-            journals = journalsInMonth,
+            journals = nonDraftJournalsInMonth,
             onTabSelected = { viewModel.onTabChange(it) },
             modifier = Modifier.weight(1f),
             bottomPadding = UiUtils.BOTTOM_BAR_PADDING
