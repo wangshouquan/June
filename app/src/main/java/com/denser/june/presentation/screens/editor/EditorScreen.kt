@@ -23,8 +23,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,6 +41,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import com.denser.hyphen.state.rememberHyphenTextState
 import com.denser.hyphen.ui.HyphenStyleConfig
+import com.denser.hyphen.ui.ListItemStyle
 import com.denser.hyphen.ui.material3.HyphenTextEditor
 
 import com.denser.june.R
@@ -390,6 +394,7 @@ fun JournalScreen() {
                     },
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 4.dp)
                         .defaultMinSize(minHeight = 84.dp)
                         .focusRequester(contentFocusRequester)
                         .onFocusChanged { focusState ->
@@ -412,7 +417,59 @@ fun JournalScreen() {
                     ),
                     styleConfig = HyphenStyleConfig(
                         boldStyle = SpanStyle(
+                            fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
+                        ),
+                        italicStyle = SpanStyle(
+                            fontStyle = FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        strikethroughStyle = SpanStyle(
+                            textDecoration = TextDecoration.LineThrough,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                        ),
+                        highlightStyle = SpanStyle(
+                            background = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f),
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        ),
+                        inlineCodeStyle = SpanStyle(
+                            background = MaterialTheme.colorScheme.surfaceVariant,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 14.sp
+                        ),
+                        blockquoteSpanStyle = SpanStyle(
+                            fontStyle = FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            background = MaterialTheme.colorScheme.surfaceContainerHighest
+                        ),
+
+                        h1Style = SpanStyle(fontSize = 28.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface),
+                        h2Style = SpanStyle(fontSize = 24.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface),
+                        h3Style = SpanStyle(fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface),
+                        h4Style = SpanStyle(fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface),
+                        h5Style = SpanStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface),
+                        h6Style = SpanStyle(fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant, letterSpacing = 0.5.sp),
+
+                        bulletListStyle = ListItemStyle(
+                            prefixStyle = SpanStyle(
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        ),
+                        orderedListStyle = ListItemStyle(
+                            prefixStyle = SpanStyle(
+                                color = MaterialTheme.colorScheme.tertiary
+                            )
+                        ),
+                        checkboxUncheckedStyle = ListItemStyle(
+                            prefixStyle = SpanStyle(
+                                color = MaterialTheme.colorScheme.outline,
+                            )
+                        ),
+                        checkboxCheckedStyle = ListItemStyle(
+                            prefixStyle = SpanStyle(
+                                color = MaterialTheme.colorScheme.tertiary,
+                            )
                         )
                     )
                 )
