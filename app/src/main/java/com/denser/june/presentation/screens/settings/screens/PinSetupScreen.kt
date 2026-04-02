@@ -6,7 +6,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.denser.june.core.domain.enums.LockType
+import com.denser.june.core.domain.model.enums.LockType
 import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.components.PinLockScreen
 import com.denser.june.presentation.screens.settings.SettingsAction

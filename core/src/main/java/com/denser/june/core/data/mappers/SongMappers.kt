@@ -1,8 +1,8 @@
 package com.denser.june.core.data.mappers
 
 import com.denser.june.core.data.dto.SonglinkApiResponse
-import com.denser.june.core.domain.data_classes.PlatformLinks
-import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.domain.model.PlatformLinks
+import com.denser.june.core.domain.model.SongDetails
 
 fun mapSonglinkResponseToSongDetails(apiResponse: SonglinkApiResponse): SongDetails? {
     val mainEntityKey = apiResponse.entityUniqueId

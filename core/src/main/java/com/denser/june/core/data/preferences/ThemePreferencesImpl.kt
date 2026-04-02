@@ -1,4 +1,4 @@
-package com.denser.june.core.data
+package com.denser.june.core.data.preferences
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -6,18 +6,16 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.denser.june.core.domain.AppPreferences
-import com.denser.june.core.domain.enums.ThemeMode
-import com.denser.june.core.domain.enums.Fonts
-import com.denser.june.core.domain.enums.LockType
+import com.denser.june.core.domain.preferences.ThemePreferences
+import com.denser.june.core.domain.model.enums.ThemeMode
+import com.denser.june.core.domain.model.enums.Fonts
 import com.materialkolor.PaletteStyle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-
-class AppPreferencesImpl(
+class ThemePreferencesImpl(
     private val dataStore: DataStore<Preferences>
-) : AppPreferences {
+) : ThemePreferences {
 
     override suspend fun resetAppTheme() {
         dataStore.edit { preferences ->
@@ -35,20 +33,16 @@ class AppPreferencesImpl(
         private val amoledPref = booleanPreferencesKey("with_amoled")
         private val paletteStyle = stringPreferencesKey("palette_style")
         private val materialTheme = booleanPreferencesKey("material_theme")
-        private val onboardingDone = booleanPreferencesKey("onboarding_done")
         private val selectedFont = stringPreferencesKey("font")
-        private val appLock = booleanPreferencesKey("app_lock")
-        private val lockType = stringPreferencesKey("lock_type")
-        private val pinHash = stringPreferencesKey("pin_hash")
     }
 
-    override fun getAppThemePrefFlow(): Flow<ThemeMode> = dataStore.data
+    override fun getThemeMode(): Flow<ThemeMode> = dataStore.data
         .map { preferences ->
             val theme = preferences[appTheme] ?: ThemeMode.SYSTEM.name
             ThemeMode.valueOf(theme)
         }
 
-    override suspend fun updateAppThemePref(pref: ThemeMode) {
+    override suspend fun updateThemeMode(pref: ThemeMode) {
         dataStore.edit {
             it[appTheme] = pref.name
         }
@@ -101,43 +95,6 @@ class AppPreferencesImpl(
     override suspend fun updateFont(font: Fonts) {
         dataStore.edit { settings ->
             settings[selectedFont] = font.name
-        }
-    }
-
-    override fun getOnboardingDoneFlow(): Flow<Boolean> = dataStore.data
-        .map { preferences -> preferences[onboardingDone] == true }
-
-    override suspend fun updateOnboardingDone(done: Boolean) {
-        dataStore.edit { settings ->
-            settings[onboardingDone] = done
-        }
-    }
-
-    override fun getAppLockFlow(): Flow<Boolean> = dataStore.data
-        .map { preferences -> preferences[appLock] == true }
-
-    override suspend fun updateAppLock(enabled: Boolean) {
-        dataStore.edit { settings ->
-            settings[appLock] = enabled
-        }
-    }
-
-    override fun getLockTypeFlow(): Flow<LockType> = dataStore.data
-        .map { preferences ->
-            val typeName = preferences[lockType] ?: LockType.BIOMETRIC.name
-            LockType.valueOf(typeName)
-        }
-
-    override suspend fun updateLockType(type: LockType) {
-        dataStore.edit { it[lockType] = type.name }
-    }
-
-    override fun getPinHashFlow(): Flow<String?> = dataStore.data
-        .map { preferences -> preferences[pinHash] }
-
-    override suspend fun updatePinHash(hash: String?) {
-        dataStore.edit {
-            if (hash == null) it.remove(pinHash) else it[pinHash] = hash
         }
     }
 }

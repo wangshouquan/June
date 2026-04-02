@@ -1,4 +1,4 @@
-package com.denser.june.core.domain.enums
+package com.denser.june.core.domain.model.enums
 
 enum class TagCategory(val label: String, val singularLabel: String, val prefix: String?) {
     Spaces("Spaces", "Space", null),

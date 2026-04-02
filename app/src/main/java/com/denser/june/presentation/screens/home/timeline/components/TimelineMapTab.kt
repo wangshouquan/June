@@ -24,8 +24,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.denser.june.core.R
-import com.denser.june.core.domain.data_classes.Journal
-import com.denser.june.core.domain.enums.ThemeMode
+import com.denser.june.core.domain.model.Journal
+import com.denser.june.core.domain.model.enums.ThemeMode
 import com.denser.june.presentation.components.MapControlColumn
 import com.denser.june.presentation.components.MapAttributions
 import com.denser.june.presentation.utils.MapTilerUtils

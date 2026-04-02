@@ -1,12 +1,11 @@
 package com.denser.june.presentation.screens.settings
 
-import com.denser.june.core.domain.enums.ThemeMode
-import com.denser.june.core.domain.enums.Fonts
-import com.denser.june.core.domain.enums.LockType
+import com.denser.june.core.domain.model.enums.ThemeMode
+import com.denser.june.core.domain.model.enums.Fonts
+import com.denser.june.core.domain.model.enums.LockType
 import com.materialkolor.PaletteStyle
 
 sealed interface SettingsAction {
-    data class OnUpdateOnboardingDone(val done: Boolean) : SettingsAction
     data class OnSeedColorChange(val color: Int): SettingsAction
     data class OnThemeSwitch(val themeMode: ThemeMode): SettingsAction
     data class OnAmoledSwitch(val amoled: Boolean): SettingsAction

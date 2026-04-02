@@ -13,7 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.model.Journal
 import com.denser.june.presentation.screens.home.timeline.TimelineTab
 
 @OptIn(ExperimentalFoundationApi::class)

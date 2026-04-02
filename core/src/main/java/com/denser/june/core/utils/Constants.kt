@@ -3,4 +3,5 @@ package com.denser.june.core.utils
 
 object Constants {
     const val GITHUB_URL = "https://github.com/DenserMeerkat/June"
+    const val ODESIL_URL = "https://api.song.link/"
 }

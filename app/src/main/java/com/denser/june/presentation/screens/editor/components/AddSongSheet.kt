@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.domain.model.SongDetails
 import kotlinx.coroutines.launch
 
 import com.denser.june.core.R

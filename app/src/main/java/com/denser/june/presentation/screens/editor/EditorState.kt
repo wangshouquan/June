@@ -1,7 +1,7 @@
 package com.denser.june.presentation.screens.editor
 
-import com.denser.june.core.domain.data_classes.JournalLocation
-import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.domain.model.JournalLocation
+import com.denser.june.core.domain.model.SongDetails
 import com.denser.june.core.utils.getTodayAtMidnight
 
 data class EditorState(

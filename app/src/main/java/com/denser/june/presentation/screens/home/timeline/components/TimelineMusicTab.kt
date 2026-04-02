@@ -24,8 +24,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.denser.june.core.domain.data_classes.Journal
-import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.domain.model.Journal
+import com.denser.june.core.domain.model.SongDetails
 import com.denser.june.core.utils.toDayOfMonth
 import com.denser.june.core.utils.toShortMonth
 import com.denser.june.presentation.components.ListenDropdownMenu

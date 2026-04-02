@@ -9,8 +9,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.colorResource
 import androidx.core.view.WindowCompat
-import com.denser.june.core.domain.data_classes.AppTheme
-import com.denser.june.core.domain.enums.ThemeMode
+import com.denser.june.core.domain.model.AppTheme
+import com.denser.june.core.domain.model.enums.ThemeMode
 import com.materialkolor.DynamicMaterialTheme
 
 

@@ -25,6 +25,9 @@ interface JournalDao {
     @Query("SELECT * FROM journals ORDER BY dateTime DESC")
     fun getAllJournals(): Flow<List<JournalEntity>>
 
+    @Query("SELECT * FROM journals ORDER BY dateTime DESC")
+    suspend fun getAllJournalsSync(): List<JournalEntity>
+
     @Query("SELECT * FROM journals WHERE id = :id")
     suspend fun getJournalById(id: Long): JournalEntity?
 

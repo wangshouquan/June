@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.denser.june.core.R
-import com.denser.june.core.domain.enums.TagCategory
+import com.denser.june.core.domain.model.enums.TagCategory
 import com.denser.june.presentation.components.JuneAppBarType
 import com.denser.june.presentation.components.JuneFloatingAction
 import com.denser.june.presentation.components.JuneFloatingActionBar

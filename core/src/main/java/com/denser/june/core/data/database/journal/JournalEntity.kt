@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.denser.june.core.data.database.converters.JournalTypeConverters
-import com.denser.june.core.domain.data_classes.JournalLocation
-import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.domain.model.JournalLocation
+import com.denser.june.core.domain.model.SongDetails
 
 @Entity(tableName = "journals")
 @TypeConverters(JournalTypeConverters::class)

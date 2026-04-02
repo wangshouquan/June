@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.model.Journal
 import com.denser.june.core.utils.toDayOfMonth
 import com.denser.june.core.utils.toShortMonth
 import com.denser.june.presentation.navigation.AppNavigator

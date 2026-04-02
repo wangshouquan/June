@@ -3,12 +3,12 @@ package com.denser.june.core.data.backup
 import android.content.Context
 import android.util.Log
 import androidx.core.net.toUri
-import com.denser.june.core.domain.JournalRepo
+import com.denser.june.core.domain.repository.JournalRepository
 import com.denser.june.core.domain.backup.ExportSchema
 import com.denser.june.core.domain.backup.RestoreFailedException
 import com.denser.june.core.domain.backup.RestoreRepo
 import com.denser.june.core.domain.backup.RestoreResult
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.model.Journal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
@@ -18,7 +18,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipInputStream
 
 class RestoreImpl(
-    private val journalRepo: JournalRepo,
+    private val journalRepo: JournalRepository,
     private val context: Context
 ) : RestoreRepo {
 

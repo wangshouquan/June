@@ -2,8 +2,9 @@ package com.denser.june
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.denser.june.core.domain.AppPreferences
-import com.denser.june.core.domain.data_classes.AppTheme
+import com.denser.june.core.domain.preferences.PrivacyPreferences
+import com.denser.june.core.domain.preferences.ThemePreferences
+import com.denser.june.core.domain.model.AppTheme
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -15,15 +16,16 @@ data class AppState(
 )
 
 class MainVM(
-    prefs: AppPreferences
+    themePrefs: ThemePreferences,
+    privacyPrefs: PrivacyPreferences
 ) : ViewModel() {
 
     private val themeFlow = combine(
-        prefs.getSeedColorFlow(),
-        prefs.getAppThemePrefFlow(),
-        prefs.getAmoledPrefFlow(),
-        prefs.getPaletteStyle(),
-        prefs.getMaterialYouFlow()
+        themePrefs.getSeedColorFlow(),
+        themePrefs.getThemeMode(),
+        themePrefs.getAmoledPrefFlow(),
+        themePrefs.getPaletteStyle(),
+        themePrefs.getMaterialYouFlow()
     ) { seed, themeMode, amoled, style, matYou ->
         AppTheme(
             seedColor = seed,
@@ -36,8 +38,8 @@ class MainVM(
 
     val state = combine(
         themeFlow,
-        prefs.getFontFlow(),
-        prefs.getAppLockFlow()
+        themePrefs.getFontFlow(),
+        privacyPrefs.getAppLockFlow()
     ) { baseTheme, font, appLock ->
         AppState(
             appTheme = baseTheme.copy(font = font),

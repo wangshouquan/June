@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.denser.june.BuildConfig
-import com.denser.june.core.domain.data_classes.JournalLocation
+import com.denser.june.core.domain.model.JournalLocation
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource

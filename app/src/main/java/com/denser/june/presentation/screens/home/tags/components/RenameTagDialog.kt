@@ -10,7 +10,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.denser.june.core.R
-import com.denser.june.core.domain.enums.TagCategory
+import com.denser.june.core.domain.model.enums.TagCategory
 import com.denser.june.presentation.utils.TagUtils
 
 private enum class WarningType {

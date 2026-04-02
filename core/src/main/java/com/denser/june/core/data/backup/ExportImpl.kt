@@ -2,7 +2,8 @@ package com.denser.june.core.data.backup
 
 import android.content.Context
 import android.util.Log
-import com.denser.june.core.domain.JournalRepo
+import com.denser.june.core.domain.model.Journal
+import com.denser.june.core.domain.repository.JournalRepository
 import com.denser.june.core.domain.backup.ExportRepo
 import com.denser.june.core.domain.backup.ExportSchema
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class ExportImpl(
-    private val journalRepo: JournalRepo,
+    private val journalRepo: JournalRepository,
     private val context: Context
 ) : ExportRepo {
 

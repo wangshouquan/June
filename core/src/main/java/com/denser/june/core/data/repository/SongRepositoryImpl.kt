@@ -1,15 +1,15 @@
-package com.denser.june.core.data
+package com.denser.june.core.data.repository
 
 import com.denser.june.core.data.mappers.mapSonglinkResponseToSongDetails
 import com.denser.june.core.data.remote.SonglinkApiService
 import com.denser.june.core.data.remote.SpotifyScraper
-import com.denser.june.core.domain.SongRepo
-import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.domain.repository.SongRepository
+import com.denser.june.core.domain.model.SongDetails
 
-class SongRepoImpl(
+class SongRepositoryImpl(
     private val apiService: SonglinkApiService,
     private val spotifyScraper: SpotifyScraper
-) : SongRepo {
+) : SongRepository {
 
     override suspend fun fetchSongDetails(url: String): Result<SongDetails> {
         return try {

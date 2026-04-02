@@ -5,9 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.denser.june.core.domain.JournalRepo
-import com.denser.june.core.domain.SongRepo
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.repository.JournalRepository
+import com.denser.june.core.domain.repository.SongRepository
+import com.denser.june.core.domain.model.Journal
 import com.denser.june.core.utils.FileUtils
 import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.navigation.Route
@@ -20,8 +20,8 @@ import kotlinx.coroutines.launch
 
 class EditorVM(
     savedStateHandle: SavedStateHandle,
-    private val journalRepo: JournalRepo,
-    private val songRepo: SongRepo,
+    private val journalRepo: JournalRepository,
+    private val songRepo: SongRepository,
     private val navigator: AppNavigator
 ) : ViewModel() {
     private val initialJournalId: Long? = savedStateHandle.getJournalIdFromRoutes()
@@ -313,6 +313,7 @@ class EditorVM(
                 }
                 .onFailure { error ->
                     _state.update { it.copy(isFetchingSong = false) }
+                    error.printStackTrace()
                     _uiEvent.send("Failed to fetch song details")
                 }
         }

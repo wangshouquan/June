@@ -2,9 +2,9 @@ package com.denser.june.presentation.screens.home.tags
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.denser.june.core.data.JournalRepository
-import com.denser.june.core.domain.data_classes.Journal
-import com.denser.june.core.domain.enums.TagCategory
+import com.denser.june.core.domain.repository.JournalRepository
+import com.denser.june.core.domain.model.Journal
+import com.denser.june.core.domain.model.enums.TagCategory
 import com.denser.june.presentation.utils.TagUtils
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*

@@ -20,7 +20,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.emoji2.emojipicker.EmojiPickerView
-import com.denser.june.core.domain.enums.ThemeMode
+import com.denser.june.core.domain.model.enums.ThemeMode
 import com.denser.june.presentation.theme.LocalAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

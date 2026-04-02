@@ -1,10 +1,9 @@
 package com.denser.june.core.data.mappers
 
 import com.denser.june.core.data.database.journal.JournalEntity
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.model.Journal
 
-
-fun JournalEntity.toJournal(): Journal {
+fun JournalEntity.asDomain(): Journal {
     return Journal(
         id = id,
         title = title,
@@ -23,7 +22,7 @@ fun JournalEntity.toJournal(): Journal {
     )
 }
 
-fun Journal.toEntity(): JournalEntity {
+fun Journal.asEntity(): JournalEntity {
     return JournalEntity(
         id = id,
         title = title,
@@ -41,3 +40,6 @@ fun Journal.toEntity(): JournalEntity {
         isDraft = isDraft
     )
 }
+
+fun List<JournalEntity>.asDomain(): List<Journal> = map { it.asDomain() }
+fun List<Journal>.asEntity(): List<JournalEntity> = map { it.asEntity() }

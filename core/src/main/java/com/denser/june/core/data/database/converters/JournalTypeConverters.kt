@@ -1,8 +1,8 @@
 package com.denser.june.core.data.database.converters
 
 import androidx.room.TypeConverter
-import com.denser.june.core.domain.data_classes.JournalLocation
-import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.domain.model.JournalLocation
+import com.denser.june.core.domain.model.SongDetails
 import kotlinx.serialization.json.Json
 
 class JournalTypeConverters {

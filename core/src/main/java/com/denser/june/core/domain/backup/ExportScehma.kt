@@ -1,6 +1,6 @@
 package com.denser.june.core.domain.backup
 
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.model.Journal
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

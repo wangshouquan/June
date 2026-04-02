@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.model.Journal
 import com.denser.june.core.utils.getDaysInMonthGrid
 import com.denser.june.presentation.components.DaysOfWeekHeader
 import java.time.DayOfWeek

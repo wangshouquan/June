@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.denser.june.core.R
-import com.denser.june.core.domain.data_classes.JournalLocation
-import com.denser.june.core.domain.enums.ThemeMode
+import com.denser.june.core.domain.model.JournalLocation
+import com.denser.june.core.domain.model.enums.ThemeMode
 import com.denser.june.presentation.components.MapLocationPin
 import com.denser.june.presentation.components.MapAttributions
 import com.denser.june.presentation.theme.LocalAppTheme

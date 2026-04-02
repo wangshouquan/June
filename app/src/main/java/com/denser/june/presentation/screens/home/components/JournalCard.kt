@@ -14,7 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.model.Journal
 import com.denser.june.core.utils.toDayOfMonth
 import com.denser.june.core.utils.toFullDate
 import com.denser.june.core.utils.toShortMonth

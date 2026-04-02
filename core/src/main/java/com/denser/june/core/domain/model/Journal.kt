@@ -1,4 +1,4 @@
-package com.denser.june.core.domain.data_classes
+package com.denser.june.core.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

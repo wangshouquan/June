@@ -27,8 +27,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import com.denser.june.core.domain.AppPreferences
-import com.denser.june.core.domain.enums.LockType
+import com.denser.june.core.domain.preferences.PrivacyPreferences
+import com.denser.june.core.domain.model.enums.LockType
 import com.denser.june.presentation.components.PinLockScreen
 import com.denser.june.core.utils.SecurityUtils
 import com.denser.june.presentation.JuneApp
@@ -46,7 +46,7 @@ enum class LockState {
 
 class MainActivity : FragmentActivity() {
 
-    private val appPreferences: AppPreferences by inject()
+    private val privacyPreferences: PrivacyPreferences by inject()
     private var lockState by mutableStateOf(LockState.LOADING)
 
     private var isPinError by mutableStateOf(false)
@@ -60,9 +60,9 @@ class MainActivity : FragmentActivity() {
         splashScreen.setKeepOnScreenCondition { lockState == LockState.LOADING }
 
         lifecycleScope.launch {
-            val isLockEnabled = appPreferences.getAppLockFlow().first()
-            val lockType = appPreferences.getLockTypeFlow().first()
-            storedPinHash = appPreferences.getPinHashFlow().first()
+            val isLockEnabled = privacyPreferences.getAppLockFlow().first()
+            val lockType = privacyPreferences.getLockTypeFlow().first()
+            storedPinHash = privacyPreferences.getPinHashFlow().first()
 
             if (!isLockEnabled) {
                 lockState = LockState.UNLOCKED

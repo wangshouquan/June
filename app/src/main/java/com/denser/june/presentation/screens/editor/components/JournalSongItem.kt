@@ -16,7 +16,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.domain.model.SongDetails
 import com.denser.june.presentation.components.JuneSongPlayerCard
 import com.denser.june.presentation.utils.rememberSongPlayerState
 

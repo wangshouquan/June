@@ -1,4 +1,4 @@
-package com.denser.june.core.domain.enums
+package com.denser.june.core.domain.model.enums
 
 import com.denser.june.core.R
 

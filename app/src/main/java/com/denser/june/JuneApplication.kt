@@ -6,14 +6,14 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import com.denser.june.core.utils.FileUtils
-import com.denser.june.core.domain.JournalRepo
+import com.denser.june.core.domain.repository.JournalRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class JuneApplication : Application() {
-    private val journalRepo: JournalRepo by inject()
+    private val journalRepo: JournalRepository by inject()
     override fun onCreate() {
         super.onCreate()
 

@@ -2,8 +2,8 @@ package com.denser.june.presentation.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.denser.june.core.domain.JournalRepo
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.repository.JournalRepository
+import com.denser.june.core.domain.model.Journal
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +32,7 @@ private data class InternalSearchState(
 )
 
 class SearchVM(
-    private val repo: JournalRepo
+    private val repo: JournalRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -92,7 +92,7 @@ class SearchVM(
         } else if (isIdle) {
             kotlinx.coroutines.flow.flowOf(SearchUiState(isIdle = true))
         } else {
-            repo.getFilteredJournals(
+            repo.getJournals(
                 query = state.query,
                 isBookmarked = if (state.bookmarked) true else null,
                 isDraft = if (state.draft) true else null,

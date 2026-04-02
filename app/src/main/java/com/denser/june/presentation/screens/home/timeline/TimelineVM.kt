@@ -8,9 +8,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.denser.june.core.R
-import com.denser.june.core.domain.JournalRepo
-import com.denser.june.core.domain.data_classes.Journal
-import com.denser.june.core.domain.data_classes.SongDetails
+import com.denser.june.core.domain.repository.JournalRepository
+import com.denser.june.core.domain.model.Journal
+import com.denser.june.core.domain.model.SongDetails
 import com.denser.june.core.utils.combineDateAndTime
 import com.denser.june.core.utils.toYearMonth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,7 +32,7 @@ enum class TimelineTab(val label: String, val iconRes: Int) {
 }
 
 class TimelineVM(
-    private val repo: JournalRepo,
+    private val repo: JournalRepository,
     context: Context,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {

@@ -1,6 +1,6 @@
 package com.denser.june.presentation.screens.editor
 
-import com.denser.june.core.domain.data_classes.JournalLocation
+import com.denser.june.core.domain.model.JournalLocation
 
 sealed interface EditorAction {
     data class ChangeTitle(val title: String) : EditorAction

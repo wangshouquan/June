@@ -2,8 +2,8 @@ package com.denser.june.presentation.screens.home.journals
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.denser.june.core.data.JournalRepository
-import com.denser.june.core.domain.data_classes.Journal
+import com.denser.june.core.domain.repository.JournalRepository
+import com.denser.june.core.domain.model.Journal
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 

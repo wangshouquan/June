@@ -1,8 +1,9 @@
 package com.denser.june.core.di
 
-import com.denser.june.core.data.AppPreferencesImpl
-import com.denser.june.core.data.JournalRepository
-import com.denser.june.core.data.SongRepoImpl
+import com.denser.june.core.data.preferences.PrivacyPreferencesImpl
+import com.denser.june.core.data.preferences.ThemePreferencesImpl
+import com.denser.june.core.data.repository.JournalRepositoryImpl
+import com.denser.june.core.data.repository.SongRepositoryImpl
 import com.denser.june.core.data.backup.ExportImpl
 import com.denser.june.core.data.backup.RestoreImpl
 import com.denser.june.core.data.database.DatabaseFactory
@@ -10,11 +11,13 @@ import com.denser.june.core.data.database.journal.JournalDatabase
 import com.denser.june.core.data.datastore.DatastoreFactory
 import com.denser.june.core.data.remote.SonglinkApiService
 import com.denser.june.core.data.remote.SpotifyScraper
-import com.denser.june.core.domain.AppPreferences
-import com.denser.june.core.domain.JournalRepo
-import com.denser.june.core.domain.SongRepo
+import com.denser.june.core.domain.preferences.PrivacyPreferences
+import com.denser.june.core.domain.preferences.ThemePreferences
+import com.denser.june.core.domain.repository.JournalRepository
+import com.denser.june.core.domain.repository.SongRepository
 import com.denser.june.core.domain.backup.ExportRepo
 import com.denser.june.core.domain.backup.RestoreRepo
+import com.denser.june.core.utils.Constants
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -34,10 +37,11 @@ val coreModule = module {
     singleOf(::ExportImpl).bind<ExportRepo>()
     singleOf(::RestoreImpl).bind<RestoreRepo>()
 
-    singleOf(::JournalRepository).bind<JournalRepo>()
+    singleOf(::JournalRepositoryImpl).bind<JournalRepository>()
 
-    single(named("AppPreferences")) { get<DatastoreFactory>().getPreferencesDataStore() }
-    single { AppPreferencesImpl(get(named("AppPreferences"))) }.bind<AppPreferences>()
+    single(named("PreferencesDataStore")) { get<DatastoreFactory>().getPreferencesDataStore() }
+    single { ThemePreferencesImpl(get(named("PreferencesDataStore"))) }.bind<ThemePreferences>()
+    single { PrivacyPreferencesImpl(get(named("PreferencesDataStore"))) }.bind<PrivacyPreferences>()
 
     single { OkHttpClient() }
     single {
@@ -48,7 +52,7 @@ val coreModule = module {
         val contentType = "application/json".toMediaType()
 
         Retrofit.Builder()
-            .baseUrl("https://api.song.link/")
+            .baseUrl(Constants.ODESIL_URL)
             .addConverterFactory(json.asConverterFactory(contentType))
             .client(get<OkHttpClient>())
             .build()
@@ -56,5 +60,5 @@ val coreModule = module {
 
     single { get<Retrofit>().create(SonglinkApiService::class.java) }
     singleOf(::SpotifyScraper)
-    singleOf(::SongRepoImpl).bind<SongRepo>()
+    singleOf(::SongRepositoryImpl).bind<SongRepository>()
 }
