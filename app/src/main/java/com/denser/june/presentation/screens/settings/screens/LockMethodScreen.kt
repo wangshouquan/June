@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -48,6 +47,7 @@ import com.denser.june.presentation.screens.settings.section.SettingSection
 import com.denser.june.presentation.screens.settings.section.SettingsItem
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
+import com.denser.june.presentation.components.JuneDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -189,26 +189,29 @@ fun LockMethodScreen() {
         }
 
         if (pendingAction != null) {
-            AlertDialog(onDismissRequest = { pendingAction = null }, icon = {
-                Icon(painterResource(R.drawable.warning_24px), contentDescription = null)
-            }, title = {
-                Text(text = "Change lock method?")
-            }, text = {
-                Text("You are switching away from Custom PIN. Your current PIN will be removed, and you will need to set it up again if you switch back.")
-            }, confirmButton = {
-                Button(
-                    onClick = {
-                        pendingAction?.invoke()
-                        pendingAction = null
-                    }) {
-                    Text("Change")
+            JuneDialog(
+                onDismissRequest = { pendingAction = null },
+                title = "Change lock method?",
+                icon = R.drawable.warning_24px,
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            pendingAction?.invoke()
+                            pendingAction = null
+                        }) {
+                        Text("Change")
+                    }
+                },
+                dismissButton = {
+                    OutlinedButton(
+                        onClick = { pendingAction = null }) {
+                        Text("Cancel")
+                    }
+                },
+                text = {
+                    Text("You are switching away from Custom PIN. Your current PIN will be removed, and you will need to set it up again if you switch back.")
                 }
-            }, dismissButton = {
-                OutlinedButton(
-                    onClick = { pendingAction = null }) {
-                    Text("Cancel")
-                }
-            })
+            )
         }
     }
 }

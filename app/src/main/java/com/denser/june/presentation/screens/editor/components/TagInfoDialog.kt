@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialShapes
@@ -30,30 +29,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.denser.june.core.R
 import com.denser.june.core.domain.model.enums.TagCategory
+import com.denser.june.presentation.components.JuneDialog
 import com.denser.june.presentation.utils.TagUtils
 
 @Composable
 fun TagInfoDialog(onDismiss: () -> Unit) {
-    AlertDialog(
+    JuneDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
         modifier = Modifier.padding(horizontal = 24.dp),
+        title = "How Tags Work",
+        icon = R.drawable.sell_24px,
         confirmButton = {
             OutlinedButton(onClick = onDismiss) { Text("Got it") }
-        },
-        icon = {
-            Icon(
-                painterResource(R.drawable.sell_24px),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        },
-        title = {
-            Text(
-                "How Tags Work",
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center
-            )
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -61,7 +49,6 @@ fun TagInfoDialog(onDismiss: () -> Unit) {
                     "Tag entries by spaces, people and themes to find them later.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {

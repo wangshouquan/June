@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.denser.june.core.R
 import com.denser.june.core.domain.model.enums.TagCategory
+import com.denser.june.presentation.components.JuneDialog
 import com.denser.june.presentation.utils.TagUtils
 
 private enum class WarningType {
@@ -43,16 +44,10 @@ fun RenameTagDialog(
         else -> WarningType.None
     }
 
-    AlertDialog(
+    JuneDialog(
         onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                painterResource(R.drawable.edit_24px),
-                null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        },
-        title = { Text("Rename Tag") },
+        title = "Rename Tag",
+        icon = R.drawable.edit_24px,
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.denser.june.core.R
 import com.denser.june.core.utils.FileUtils
+import com.denser.june.presentation.components.JuneDialog
 import com.denser.june.presentation.screens.editor.components.AddItemSheet
 import com.denser.june.presentation.screens.editor.components.AddLocationDialog
 import com.denser.june.presentation.screens.editor.components.AddSongSheet
@@ -74,11 +75,10 @@ fun EditorModals(
     }
 
     if (dialogState.showCameraSelectionDialog) {
-        AlertDialog(
+        JuneDialog(
             onDismissRequest = { dialogState.showCameraSelectionDialog = false },
-            icon = { Icon(painterResource(R.drawable.add_a_photo_24px), null) },
-            title = { Text("Capture Media") },
-            text = { Text("Would you like to take a photo or record a video?") },
+            title = "Capture Media",
+            icon = R.drawable.add_a_photo_24px,
             confirmButton = {
                 TextButton(onClick = {
                     dialogState.showCameraSelectionDialog = false
@@ -94,16 +94,16 @@ fun EditorModals(
                     tempCameraUri = uri
                     photoLauncher.launch(uri)
                 }) { Text("Take Photo") }
-            }
+            },
+            text = { Text("Would you like to take a photo or record a video?") }
         )
     }
 
     if (dialogState.showExitDialog) {
-        AlertDialog(
+        JuneDialog(
             onDismissRequest = { dialogState.showExitDialog = false },
-            icon = { Icon(painterResource(R.drawable.file_save_24px), null) },
-            title = { Text("Save Entry?") },
-            text = { Text("Would you like to save your progress before leaving?") },
+            title = "Save Entry?",
+            icon = R.drawable.file_save_24px,
             confirmButton = {
                 Button(onClick = {
                     dialogState.showExitDialog = false
@@ -116,7 +116,8 @@ fun EditorModals(
                     dialogState.showExitDialog = false
                     onAction(EditorAction.NavigateBack)
                 }) { Text("Discard") }
-            }
+            },
+            text = { Text("Would you like to save your progress before leaving?") }
         )
     }
 

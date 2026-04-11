@@ -2,9 +2,12 @@ package com.denser.june.presentation.screens.settings.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -41,21 +44,26 @@ fun FontPickerDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(24.dp)
                     .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.format_size_24px),
-                    contentDescription = "Select App Font",
-                    modifier = Modifier.size(32.dp)
-                )
-
-                Text(
-                    text = "Select App Font",
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.format_size_24px),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = "Select App Font",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
 
                 Column (
                     modifier = Modifier.widthIn(max = 250.dp),

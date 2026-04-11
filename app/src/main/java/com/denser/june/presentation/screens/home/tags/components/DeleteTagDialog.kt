@@ -6,11 +6,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.denser.june.core.R
 import com.denser.june.presentation.utils.TagUtils
+
+import com.denser.june.presentation.components.JuneDialog
 
 @Composable
 fun DeleteTagDialog(
@@ -18,15 +19,11 @@ fun DeleteTagDialog(
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
-    AlertDialog(
+    JuneDialog(
         onDismissRequest = onDismiss,
-        icon = {
-            Icon(
-                painterResource(R.drawable.delete_24px),
-                null
-            )
-        },
-        title = { Text("Delete Tag?") },
+        title = "Delete Tag?",
+        icon = R.drawable.delete_24px,
+        iconTint = MaterialTheme.colorScheme.error,
         text = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(12.dp),

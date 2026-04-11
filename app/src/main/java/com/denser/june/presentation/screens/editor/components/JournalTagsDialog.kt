@@ -27,11 +27,13 @@ import androidx.compose.ui.window.DialogProperties
 import com.denser.june.core.R
 import com.denser.june.core.domain.model.enums.TagCategory
 import com.denser.june.presentation.components.JuneAppBarType
+import com.denser.june.presentation.components.JuneDialog
 import com.denser.june.presentation.components.JuneFloatingAction
 import com.denser.june.presentation.components.JuneFloatingActionBar
 import com.denser.june.presentation.components.JuneTopAppBar
 import com.denser.june.presentation.utils.TagUtils
 import com.denser.june.presentation.utils.UiUtils
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,17 +69,10 @@ fun JournalTagsDialog(
     }
 
     if (showExitDialog) {
-        AlertDialog(
+        JuneDialog(
             onDismissRequest = { showExitDialog = false },
-            icon = {
-                Icon(
-                    painterResource(R.drawable.file_save_24px),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            },
-            title = { Text("Save Changes?") },
-            text = { Text("You have unsaved changes to your tags. Do you want to save them before exiting?") },
+            title = "Save Changes?",
+            icon = R.drawable.file_save_24px,
             confirmButton = {
                 Button(onClick = {
                     showExitDialog = false
@@ -90,7 +85,8 @@ fun JournalTagsDialog(
                     showExitDialog = false
                     onDismiss()
                 }) { Text("Discard") }
-            }
+            },
+            text = { Text("You have unsaved changes to your tags. Do you want to save them before exiting?") }
         )
     }
 

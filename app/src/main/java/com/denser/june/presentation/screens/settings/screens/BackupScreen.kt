@@ -25,10 +25,10 @@ import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.components.JuneAppBarType
 import com.denser.june.presentation.components.JuneTopAppBar
 import com.denser.june.presentation.screens.settings.SettingsAction
-import com.denser.june.presentation.screens.settings.SettingsState
 import org.koin.compose.koinInject
 
 import com.denser.june.core.R
+import com.denser.june.presentation.components.JuneDialog
 import com.denser.june.core.domain.backup.RestoreFailedException
 import com.denser.june.presentation.screens.settings.SettingsVM
 import com.denser.june.presentation.screens.settings.section.SettingSection
@@ -235,10 +235,21 @@ fun BackupScreen() {
     }
 
     if (showExportDialog) {
-        AlertDialog(
+        JuneDialog(
             onDismissRequest = { showExportDialog = false },
-            icon = { Icon(painterResource(R.drawable.upload_24px), null) },
-            title = { Text("Create Backup?") },
+            title = "Create Backup?",
+            icon = R.drawable.upload_24px,
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showExportDialog = false
+                        onAction(SettingsAction.OnExportJournals(includeMedia))
+                    }
+                ) { Text("Create") }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showExportDialog = false }) { Text("Cancel") }
+            },
             text = {
                 Column {
                     Text("This will create a ZIP file containing your journal entries.")
@@ -269,29 +280,15 @@ fun BackupScreen() {
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showExportDialog = false
-                        onAction(SettingsAction.OnExportJournals(includeMedia))
-                    }
-                ) { Text("Create") }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { showExportDialog = false }) { Text("Cancel") }
             }
         )
     }
 
     if (showRestoreWarning != null) {
-        AlertDialog(
+        JuneDialog(
             onDismissRequest = { showRestoreWarning = null },
-            icon = { Icon(painterResource(R.drawable.cloud_sync_24px), null) },
-            title = { Text("Restore Backup?") },
-            text = {
-                Text("This will merge the backup with your current data.\n\n• Entries with matching IDs will be OVERWRITTEN.\n• New entries will be ADDED.\n\nThis action cannot be undone.")
-            },
+            title = "Restore Backup?",
+            icon = R.drawable.cloud_sync_24px,
             confirmButton = {
                 Button(
                     onClick = {
@@ -303,6 +300,9 @@ fun BackupScreen() {
             },
             dismissButton = {
                 OutlinedButton(onClick = { showRestoreWarning = null }) { Text("Cancel") }
+            },
+            text = {
+                Text("This will merge the backup with your current data.\n\n• Entries with matching IDs will be OVERWRITTEN.\n• New entries will be ADDED.\n\nThis action cannot be undone.")
             }
         )
     }

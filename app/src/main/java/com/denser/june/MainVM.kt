@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.denser.june.core.domain.preferences.PrivacyPreferences
 import com.denser.june.core.domain.preferences.ThemePreferences
 import com.denser.june.core.domain.model.AppTheme
+import com.denser.june.core.domain.preferences.SyncPreferences
 import com.denser.june.core.domain.sync.SyncManager
 import com.denser.june.core.domain.sync.SyncStatus
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,7 +24,7 @@ class MainVM(
     themePrefs: ThemePreferences,
     privacyPrefs: PrivacyPreferences,
     private val syncManager: SyncManager,
-    private val syncPrefs: com.denser.june.core.domain.preferences.SyncPreferences
+    private val syncPrefs: SyncPreferences
 ) : ViewModel() {
 
     private val themeFlow = combine(
