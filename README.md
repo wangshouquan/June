@@ -28,8 +28,8 @@
   <img src="assets/screenshots/editor4.png" width="23%" style="border-radius:12px; margin: 1px;">
   <img src="assets/screenshots/timeline1.png" width="23%" style="border-radius:12px; margin: 1px;">
   <img src="assets/screenshots/timeline4.png" width="23%" style="border-radius:12px; margin: 1px;">
-  <img src="assets/screenshots/search1.png" width="23%" style="border-radius:12px; margin: 1px;">
   <img src="assets/screenshots/settings1.png" width="23%" style="border-radius:12px; margin: 1px;">
+  <img src="assets/screenshots/sync1.png" width="23%" style="border-radius:12px; margin: 1px;">
 </p>
 
 ## Core Features
@@ -54,7 +54,8 @@ June is designed to be more than just text—it's a multimedia capsule of your l
 
 - **Privacy Vault:** Keep your thoughts for your eyes only with multiple locking options. Choose between fast Biometric Unlock (Fingerprint/Face) or a dedicated Custom PIN that exists independently of your phone's system lock.
 - **Expressive Theming:** Enjoy a personalized look with **Dynamic Wallpaper Colors (Material You)** or curated custom themes.
-- **Total Ownership:** 100% offline architecture with full Backup & Restore capabilities—your data never leaves your device.
+- **Total Ownership:** 100% offline architecture with full Backup & Restore capabilities—your data never leaves your device unless you choose to sync it.
+- **Cloud Sync:** Keep your journal in sync across devices using **WebDAV**. Maintain 100% privacy by using your own Nextcloud, ownCloud, or any WebDAV provider.
 
 ## Tech Stack
 
