@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,9 +19,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.denser.june.core.domain.model.Journal
 import com.denser.june.core.utils.*
 import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.navigation.Route
+import com.denser.june.presentation.screens.home.components.DeleteConfirmationSheet
+import com.denser.june.presentation.screens.home.components.JournalOptionsSheet
 import com.denser.june.presentation.screens.home.timeline.components.TimelineCalendarPage
 import com.denser.june.presentation.screens.home.timeline.components.TimelineMonthStrip
 import com.denser.june.presentation.screens.home.timeline.components.TimelineTabs
@@ -32,6 +36,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import java.time.LocalDate
 import kotlin.math.abs
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimelinePage(
     viewModel: TimelineVM = koinViewModel()
@@ -45,6 +50,65 @@ fun TimelinePage(
 
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
+
+    var selectedJournalForOptions by remember { mutableStateOf<Journal?>(null) }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val deleteSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    fun dismissSheet(action: () -> Unit) {
+        action()
+        scope.launch { sheetState.hide() }.invokeOnCompletion {
+            selectedJournalForOptions = null
+        }
+    }
+
+    val currentJournalForOptions = remember(selectedJournalForOptions, journalsInMonth) {
+        val id = selectedJournalForOptions?.id ?: return@remember null
+        journalsInMonth.find { it.id == id }
+    }
+
+    if (currentJournalForOptions != null) {
+        ModalBottomSheet(
+            onDismissRequest = { selectedJournalForOptions = null },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
+            JournalOptionsSheet(
+                journal = currentJournalForOptions,
+                onToggleBookmark = {
+                    viewModel.toggleBookmark(currentJournalForOptions.id)
+                },
+                onDeleteOrRestore = {
+                    if (currentJournalForOptions.isDeleted) {
+                        dismissSheet { viewModel.restoreJournal(currentJournalForOptions.id) }
+                    } else {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            showDeleteConfirmation = true
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    if (showDeleteConfirmation && selectedJournalForOptions != null) {
+        DeleteConfirmationSheet(
+            sheetState = deleteSheetState,
+            onDismissRequest = {
+                showDeleteConfirmation = false
+                selectedJournalForOptions = null
+            },
+            onConfirm = {
+                val id = selectedJournalForOptions?.id
+                scope.launch { deleteSheetState.hide() }.invokeOnCompletion {
+                    showDeleteConfirmation = false
+                    if (id != null) viewModel.deleteJournal(id)
+                    selectedJournalForOptions = null
+                }
+            }
+        )
+    }
 
     val nonDraftJournalsInMonth = journalsInMonth.filter { !it.isDraft }
     val weeksInMonth = remember(currentMonth) { getWeeksInMonth(currentMonth) }
@@ -198,7 +262,8 @@ fun TimelinePage(
             journals = nonDraftJournalsInMonth,
             onTabSelected = { viewModel.onTabChange(it) },
             modifier = Modifier.weight(1f),
-            bottomPadding = UiUtils.BOTTOM_BAR_PADDING
+            bottomPadding = UiUtils.BOTTOM_BAR_PADDING,
+            onLongClickJournal = { journal -> selectedJournalForOptions = journal }
         )
     }
 }

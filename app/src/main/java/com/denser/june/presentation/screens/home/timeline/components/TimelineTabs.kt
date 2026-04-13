@@ -23,7 +23,8 @@ fun TimelineTabs(
     journals: List<Journal>,
     onTabSelected: (TimelineTab) -> Unit,
     modifier: Modifier = Modifier,
-    bottomPadding: Dp = 0.dp
+    bottomPadding: Dp = 0.dp,
+    onLongClickJournal: ((Journal) -> Unit)? = null
 ) {
     CompositionLocalProvider(
         LocalOverscrollFactory provides null
@@ -59,7 +60,8 @@ fun TimelineTabs(
                 when (selectedTab) {
                     TimelineTab.Journals -> TimelineJournalTab(
                         journals = journals,
-                        bottomPadding = bottomPadding
+                        bottomPadding = bottomPadding,
+                        onLongClick = onLongClickJournal
                     )
 
                     TimelineTab.Media -> TimelineMediaTab(

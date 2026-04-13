@@ -34,7 +34,8 @@ fun JournalCard(
     journal: Journal,
     modifier: Modifier,
     actionIcon: Int? = null,
-    onActionClick: (() -> Unit)? = null
+    onActionClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null
 ) {
     val viewModel: JournalsVM = koinViewModel()
     val navigator = koinInject<AppNavigator>()
@@ -48,7 +49,7 @@ fun JournalCard(
             .clip(RoundedCornerShape(24.dp))
             .combinedClickable(
                 onClick = { navigator.navigateTo(Route.Editor(journal.id), isSingleTop = true) },
-                onLongClick = {}
+                onLongClick = onLongClick
             ),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -133,14 +134,16 @@ fun RecentJournalCard(
     journal: Journal,
     modifier: Modifier,
     actionIcon: Int? = null,
-    onActionClick: (() -> Unit)? = null
+    onActionClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null
 ) {
     if (journal.images.isEmpty()) {
         JournalCard(
             journal = journal,
             modifier = modifier,
             actionIcon = actionIcon,
-            onActionClick = onActionClick
+            onActionClick = onActionClick,
+            onLongClick = onLongClick
         )
     } else {
         val viewModel: JournalsVM = koinViewModel()
@@ -163,7 +166,7 @@ fun RecentJournalCard(
                             isSingleTop = true
                         )
                     },
-                    onLongClick = {}
+                    onLongClick = onLongClick
                 ),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer

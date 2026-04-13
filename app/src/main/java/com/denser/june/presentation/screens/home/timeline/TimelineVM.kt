@@ -200,4 +200,16 @@ class TimelineVM(
         super.onCleared()
         exoPlayer.release()
     }
+
+    fun toggleBookmark(id: String) {
+        viewModelScope.launch { repo.toggleBookmark(id) }
+    }
+
+    fun deleteJournal(id: String) {
+        viewModelScope.launch { repo.softDeleteJournal(id) }
+    }
+
+    fun restoreJournal(id: String) {
+        viewModelScope.launch { repo.restoreJournal(id) }
+    }
 }

@@ -121,4 +121,16 @@ class TagsVM(
     fun clearFilters() {
         _selectedFilters.value = emptySet()
     }
+
+    fun toggleBookmark(id: String) {
+        viewModelScope.launch { repository.toggleBookmark(id) }
+    }
+
+    fun softDelete(id: String) {
+        viewModelScope.launch { repository.softDeleteJournal(id) }
+    }
+
+    fun restoreJournal(id: String) {
+        viewModelScope.launch { repository.restoreJournal(id) }
+    }
 }

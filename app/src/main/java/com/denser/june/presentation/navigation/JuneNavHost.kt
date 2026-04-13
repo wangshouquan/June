@@ -25,7 +25,7 @@ import com.denser.june.presentation.screens.settings.screens.LockMethodScreen
 import com.denser.june.presentation.screens.settings.screens.PermissionsScreen
 import com.denser.june.presentation.screens.settings.screens.PinSetupScreen
 import com.denser.june.presentation.screens.settings.screens.sync.SyncScreen
-import com.denser.june.presentation.screens.settings.screens.bin.BinScreen
+import com.denser.june.presentation.screens.settings.screens.trash.BinScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

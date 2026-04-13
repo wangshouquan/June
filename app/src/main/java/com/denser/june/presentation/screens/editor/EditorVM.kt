@@ -211,6 +211,8 @@ class EditorVM(
                         isArchived = journal.isArchived,
                         isDraft = journal.isDraft,
                         deletedAt = journal.deletedAt,
+                        syncedAt = journal.syncedAt,
+                        cloudId = journal.cloudId,
                         isLoading = false,
                         isDirty = false
                     )

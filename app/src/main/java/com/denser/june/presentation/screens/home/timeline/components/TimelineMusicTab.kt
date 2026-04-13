@@ -235,27 +235,7 @@ fun MusicListTile(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier
-                    .width(48.dp)
-                    .padding(end = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = journal.dateTime.toDayOfMonth(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = journal.dateTime.toShortMonth(),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 1.sp
-                )
-            }
+            TimelineDateColumn(dateTime = journal.dateTime)
             AsyncImage(
                 model = song.thumbnailUrl,
                 contentDescription = null,

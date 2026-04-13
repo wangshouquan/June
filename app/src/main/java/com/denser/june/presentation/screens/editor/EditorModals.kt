@@ -21,6 +21,7 @@ import com.denser.june.presentation.screens.editor.components.AddSongSheet
 import com.denser.june.presentation.screens.editor.components.JournalDatePickerDialog
 import com.denser.june.presentation.screens.editor.components.JournalEmojiPickerDialog
 import com.denser.june.presentation.screens.editor.components.JournalTagsDialog
+import com.denser.june.presentation.screens.home.components.DeleteConfirmationSheet
 
 class EditorDialogState {
     var showExitDialog by mutableStateOf(false)
@@ -122,53 +123,13 @@ fun EditorModals(
     }
 
     if (dialogState.showDeleteConfirmation) {
-        ModalBottomSheet(
+        DeleteConfirmationSheet(
             onDismissRequest = { dialogState.showDeleteConfirmation = false },
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            dragHandle = { BottomSheetDefaults.DragHandle() }
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = "Move to bin? It will be permanently deleted after 30 days.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Surface(
-                    onClick = {
-                        dialogState.showDeleteConfirmation = false
-                        onAction(EditorAction.DeleteJournal)
-                    },
-                    color = androidx.compose.ui.graphics.Color.Transparent
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp, 20.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.delete_24px),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Text(
-                            text = "Move to bin",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                }
+            onConfirm = {
+                dialogState.showDeleteConfirmation = false
+                onAction(EditorAction.DeleteJournal)
             }
-        }
+        )
     }
 
     if (dialogState.showDatePicker) {

@@ -20,14 +20,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.denser.june.core.R
 import com.denser.june.core.domain.model.enums.TagCategory
+import com.denser.june.core.domain.model.Journal
 import com.denser.june.presentation.components.JunePlaceholderPage
+import com.denser.june.presentation.screens.home.components.DeleteConfirmationSheet
 import com.denser.june.presentation.screens.home.components.JournalCard
+import com.denser.june.presentation.screens.home.components.JournalOptionsSheet
 import com.denser.june.presentation.screens.home.tags.components.DeleteTagDialog
 import com.denser.june.presentation.screens.home.tags.components.FilterBottomSheet
 import com.denser.june.presentation.screens.home.tags.components.FilterFab
 import com.denser.june.presentation.screens.home.tags.components.RenameTagDialog
 import com.denser.june.presentation.utils.TagUtils
 import com.denser.june.presentation.utils.UiUtils
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -50,6 +54,19 @@ fun TagsPage() {
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     var showFilterSheet by remember { mutableStateOf(false) }
+
+    var selectedJournalForOptions by remember { mutableStateOf<Journal?>(null) }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    val optionsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val deleteSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+
+    fun dismissOptionsSheet(action: () -> Unit) {
+        action()
+        scope.launch { optionsSheetState.hide() }.invokeOnCompletion {
+            selectedJournalForOptions = null
+        }
+    }
 
     val filterSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -237,7 +254,11 @@ fun TagsPage() {
                         }
                     } else {
                         items(journals!!, key = { it.id }) { journal ->
-                            JournalCard(journal = journal, modifier = Modifier.animateItem())
+                            JournalCard(
+                                journal = journal,
+                                modifier = Modifier.animateItem(),
+                                onLongClick = { selectedJournalForOptions = journal }
+                            )
                         }
                     }
                 }
@@ -273,6 +294,53 @@ fun TagsPage() {
                 onToggle = { viewModel.toggleFilter(it) },
                 onClearAll = { viewModel.clearFilters() },
                 onDismiss = { showFilterSheet = false }
+            )
+        }
+
+        val currentJournalForOptions = remember(selectedJournalForOptions, journals) {
+            val id = selectedJournalForOptions?.id ?: return@remember null
+            (journals ?: emptyList()).find { it.id == id }
+        }
+
+        if (currentJournalForOptions != null) {
+            ModalBottomSheet(
+                onDismissRequest = { selectedJournalForOptions = null },
+                sheetState = optionsSheetState,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            ) {
+                JournalOptionsSheet(
+                    journal = currentJournalForOptions,
+                    onToggleBookmark = {
+                        viewModel.toggleBookmark(currentJournalForOptions.id)
+                    },
+                    onDeleteOrRestore = {
+                        if (currentJournalForOptions.isDeleted) {
+                            dismissOptionsSheet { viewModel.restoreJournal(currentJournalForOptions.id) }
+                        } else {
+                            scope.launch { optionsSheetState.hide() }.invokeOnCompletion {
+                                showDeleteConfirmation = true
+                            }
+                        }
+                    }
+                )
+            }
+        }
+
+        if (showDeleteConfirmation && selectedJournalForOptions != null) {
+            DeleteConfirmationSheet(
+                sheetState = deleteSheetState,
+                onDismissRequest = {
+                    showDeleteConfirmation = false
+                    selectedJournalForOptions = null
+                },
+                onConfirm = {
+                    val id = selectedJournalForOptions?.id
+                    scope.launch { deleteSheetState.hide() }.invokeOnCompletion {
+                        showDeleteConfirmation = false
+                        if (id != null) viewModel.softDelete(id)
+                        selectedJournalForOptions = null
+                    }
+                }
             )
         }
 

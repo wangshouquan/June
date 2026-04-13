@@ -35,6 +35,7 @@ import com.denser.june.core.utils.toDateWithDay
 import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.navigation.Route
 import com.denser.june.presentation.components.JuneTopAppBar
+import com.denser.june.presentation.screens.home.components.JournalOptionsSheet
 import com.denser.june.presentation.screens.editor.components.JournalItemsPreview
 import com.denser.june.presentation.screens.editor.components.MediaOperations
 import org.koin.compose.koinInject
@@ -48,11 +49,13 @@ import com.denser.june.presentation.screens.editor.components.JuneLinkSheet
 import com.denser.june.presentation.screens.editor.components.JuneLinkMenu
 
 import com.denser.june.core.R
+import com.denser.june.core.domain.model.Journal
 import com.denser.june.core.utils.toFullTime
 import com.denser.june.core.utils.toLocalTime
 import com.denser.june.presentation.screens.editor.components.EditorToolbar
 import com.denser.june.presentation.utils.TagUtils
 import com.denser.june.presentation.utils.UiUtils
+import kotlinx.coroutines.launch
 import java.time.LocalTime
 
 
@@ -67,6 +70,7 @@ fun JournalScreen() {
 
     val dialogState = rememberEditorDialogState()
     var showMenu by remember { mutableStateOf(false) }
+    var showOptionsSheet by remember { mutableStateOf(false) }
     val isEditorReady = !state.isLoading
     val hyphenState = rememberHyphenTextState()
 
@@ -227,25 +231,11 @@ fun JournalScreen() {
                         ) {
                             Text("Save")
                         }
-                    } else {
-                        IconButton(
-                            onClick = { viewModel.onAction(EditorAction.ToggleBookmark) },
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                    alpha = 0.75f
-                                )
-                            ),
-                        ) {
-                            Icon(
-                                painterResource(if (state.isBookmarked) R.drawable.bookmark_added_24px_fill else R.drawable.bookmark_24px),
-                                "Toggle Bookmark"
-                            )
-                        }
                     }
 
                     Box {
                         IconButton(
-                            onClick = { showMenu = true },
+                            onClick = { showOptionsSheet = true },
                             colors = IconButtonDefaults.iconButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                                     alpha = 0.75f
@@ -256,47 +246,6 @@ fun JournalScreen() {
                                 painterResource(R.drawable.more_vert_24px),
                                 "Options"
                             )
-                        }
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false },
-                            shape = RoundedCornerShape(24.dp),
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            tonalElevation = 3.dp,
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            offset = androidx.compose.ui.unit.DpOffset(x = 0.dp, y = 4.dp)
-                        ) {
-                            if (state.isDeleted) {
-                                DropdownMenuItem(
-                                    modifier = Modifier.clip(RoundedCornerShape(16.dp)),
-                                    text = { Text("Restore") },
-                                    onClick = {
-                                        showMenu = false
-                                        viewModel.onAction(EditorAction.RestoreJournal)
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            painterResource(R.drawable.restore_from_trash_24px),
-                                            null
-                                        )
-                                    }
-                                )
-                            } else {
-                                DropdownMenuItem(
-                                    modifier = Modifier.clip(RoundedCornerShape(16.dp)),
-                                    text = { Text("Delete") },
-                                    onClick = {
-                                        showMenu = false
-                                        dialogState.showDeleteConfirmation = true
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            painterResource(R.drawable.delete_24px),
-                                            null
-                                        )
-                                    }
-                                )
-                            }
                         }
                     }
                 }
@@ -518,4 +467,54 @@ fun JournalScreen() {
         editorState = state,
         onAction = viewModel::onAction
     )
+
+    if (showOptionsSheet) {
+        val journalPreview = remember(state) {
+            Journal(
+                id = state.journalId ?: "",
+                title = state.title,
+                content = state.content,
+                emoji = state.emoji,
+                images = state.images,
+                location = state.location,
+                songDetails = state.songDetails,
+                tags = state.tags,
+                createdAt = state.createdAt,
+                updatedAt = state.updatedAt,
+                dateTime = state.dateTime,
+                isBookmarked = state.isBookmarked,
+                isArchived = state.isArchived,
+                isDraft = state.isDraft,
+                deletedAt = state.deletedAt,
+                syncedAt = state.syncedAt,
+                cloudId = state.cloudId
+            )
+        }
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        val scope = rememberCoroutineScope()
+
+        ModalBottomSheet(
+            onDismissRequest = { showOptionsSheet = false },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
+            JournalOptionsSheet(
+                journal = journalPreview,
+                onToggleBookmark = { viewModel.onAction(EditorAction.ToggleBookmark) },
+                onDeleteOrRestore = {
+                    if (state.isDeleted) {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            showOptionsSheet = false
+                            viewModel.onAction(EditorAction.RestoreJournal)
+                        }
+                    } else {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            showOptionsSheet = false
+                            dialogState.showDeleteConfirmation = true
+                        }
+                    }
+                }
+            )
+        }
+    }
 }

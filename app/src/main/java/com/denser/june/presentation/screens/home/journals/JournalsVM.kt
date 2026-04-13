@@ -44,4 +44,8 @@ class JournalsVM(
     fun toggleBookmark(id: String) {
         viewModelScope.launch { journalRepo.toggleBookmark(id) }
     }
+
+    fun restoreJournal(id: String) {
+        viewModelScope.launch { journalRepo.restoreJournal(id) }
+    }
 }

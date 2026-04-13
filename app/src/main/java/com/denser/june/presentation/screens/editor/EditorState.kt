@@ -23,7 +23,9 @@ data class EditorState(
     val isDirty: Boolean = false,
     val isDraft: Boolean = true,
     val isFetchingSong: Boolean = false,
-    val deletedAt: Long? = null
+    val deletedAt: Long? = null,
+    val syncedAt: Long? = null,
+    val cloudId: String? = null
 ) {
     val isDeleted: Boolean get() = deletedAt != null
     val hasContent: Boolean

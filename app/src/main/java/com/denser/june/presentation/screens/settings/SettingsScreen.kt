@@ -61,7 +61,6 @@ fun SettingsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .clip(RoundedCornerShape(24.dp))
         ) {
             item(key = "general_section") {
                 GeneralSection(

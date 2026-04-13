@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -15,8 +16,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.denser.june.core.R
+import com.denser.june.core.domain.model.Journal
 import com.denser.june.presentation.components.JunePlaceholderPage
+import com.denser.june.presentation.screens.home.components.DeleteConfirmationSheet
 import com.denser.june.presentation.screens.home.components.JournalCard
+import com.denser.june.presentation.screens.home.components.JournalOptionsSheet
 import com.denser.june.presentation.screens.home.components.RecentJournalCard
 import com.denser.june.presentation.utils.UiUtils
 import org.koin.compose.viewmodel.koinViewModel
@@ -32,7 +36,9 @@ enum class JournalListTab(
     Drafts("Drafts", R.drawable.edit_note_24px, R.drawable.edit_note_24px_fill, 0.9f)
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun JournalsPage() {
     val viewModel: JournalsVM = koinViewModel()
@@ -42,6 +48,73 @@ fun JournalsPage() {
 
     val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
+
+
+    var selectedJournalForOptions by remember { mutableStateOf<Journal?>(null) }
+    var showDeleteConfirmation by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val deleteSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
+
+    fun dismissSheet(action: () -> Unit) {
+        action()
+        scope.launch { sheetState.hide() }.invokeOnCompletion {
+            selectedJournalForOptions = null
+        }
+    }
+
+    val currentJournalForOptions = remember(selectedJournalForOptions, nonDrafts, bookmarkedJournals, draftJournals) {
+        val id = selectedJournalForOptions?.id ?: return@remember null
+        (nonDrafts ?: emptyList()).find { it.id == id }
+            ?: (bookmarkedJournals ?: emptyList()).find { it.id == id }
+            ?: (draftJournals ?: emptyList()).find { it.id == id }
+    }
+
+    if (currentJournalForOptions != null) {
+        ModalBottomSheet(
+            onDismissRequest = { selectedJournalForOptions = null },
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        ) {
+            JournalOptionsSheet(
+                journal = currentJournalForOptions,
+                onToggleBookmark = {
+                    if (selectedTab == JournalListTab.Bookmarks) {
+                        dismissSheet { viewModel.toggleBookmark(currentJournalForOptions.id) }
+                    } else {
+                        viewModel.toggleBookmark(currentJournalForOptions.id)
+                    }
+                },
+                onDeleteOrRestore = {
+                    if (currentJournalForOptions.isDeleted) {
+                        dismissSheet { viewModel.restoreJournal(currentJournalForOptions.id) }
+                    } else {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion {
+                            showDeleteConfirmation = true
+                        }
+                    }
+                }
+            )
+        }
+    }
+
+    if (showDeleteConfirmation && selectedJournalForOptions != null) {
+        DeleteConfirmationSheet(
+            sheetState = deleteSheetState,
+            onDismissRequest = {
+                showDeleteConfirmation = false
+                selectedJournalForOptions = null
+            },
+            onConfirm = {
+                val id = selectedJournalForOptions?.id
+                scope.launch { deleteSheetState.hide() }.invokeOnCompletion {
+                    showDeleteConfirmation = false
+                    if (id != null) viewModel.deleteJournal(id)
+                    selectedJournalForOptions = null
+                }
+            }
+        )
+    }
 
     val recentJournal = remember(nonDrafts) { nonDrafts?.firstOrNull() }
     val moreJournals = remember(nonDrafts) { nonDrafts?.drop(1) ?: emptyList() }
@@ -133,7 +206,8 @@ fun JournalsPage() {
                                 item(key = "recent_${recentJournal.id}") {
                                     RecentJournalCard(
                                         journal = recentJournal,
-                                        modifier = Modifier.animateItem()
+                                        modifier = Modifier.animateItem(),
+                                        onLongClick = { selectedJournalForOptions = recentJournal }
                                     )
                                 }
                             }
@@ -149,7 +223,8 @@ fun JournalsPage() {
                                 items(moreJournals, key = { "more_${it.id}" }) { journal ->
                                     JournalCard(
                                         journal = journal,
-                                        modifier = Modifier.animateItem()
+                                        modifier = Modifier.animateItem(),
+                                        onLongClick = { selectedJournalForOptions = journal }
                                     )
                                 }
                             }
@@ -176,7 +251,8 @@ fun JournalsPage() {
                             items(bookmarkedJournals!!, key = { "bm_${it.id}" }) { journal ->
                                 JournalCard(
                                     journal = journal,
-                                    modifier = Modifier.animateItem()
+                                    modifier = Modifier.animateItem(),
+                                    onLongClick = { selectedJournalForOptions = journal }
                                 )
                             }
                         }
@@ -202,7 +278,8 @@ fun JournalsPage() {
                             items(draftJournals!!, key = { "draft_${it.id}" }) { journal ->
                                 JournalCard(
                                     journal = journal,
-                                    modifier = Modifier.animateItem()
+                                    modifier = Modifier.animateItem(),
+                                    onLongClick = { selectedJournalForOptions = journal }
                                 )
                             }
                         }

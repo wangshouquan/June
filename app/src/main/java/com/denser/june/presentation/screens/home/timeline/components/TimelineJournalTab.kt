@@ -1,6 +1,7 @@
 package com.denser.june.presentation.screens.home.timeline.components
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,18 +20,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.denser.june.core.domain.model.Journal
-import com.denser.june.core.utils.toDayOfMonth
-import com.denser.june.core.utils.toShortMonth
 import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.navigation.Route
+import com.denser.june.presentation.components.JuneBadge
 import org.koin.compose.koinInject
 
 import com.denser.june.core.R
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TimelineJournalTab(
     journals: List<Journal>,
-    bottomPadding: Dp
+    bottomPadding: Dp,
+    onLongClick: ((Journal) -> Unit)? = null
 ) {
     val navigator = koinInject<AppNavigator>()
 
@@ -47,16 +49,19 @@ fun TimelineJournalTab(
                     journal = journal,
                     onClick = {
                         navigator.navigateTo(Route.Editor(journal.id), isSingleTop = true)
-                    }
+                    },
+                    onLongClick = onLongClick?.let { cb -> { cb(journal) } }
                 )
             }
         }
     }
 }
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TimelineJournalTile(
     journal: Journal,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null
 ) {
     val wordCount = remember(journal.content) {
         val trimmed = journal.content.trim()
@@ -74,7 +79,10 @@ fun TimelineJournalTile(
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .clip(RoundedCornerShape(16.dp))
-            .clickable { onClick() },
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            ),
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         tonalElevation = 2.dp
@@ -85,27 +93,7 @@ fun TimelineJournalTile(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier
-                    .width(48.dp)
-                    .padding(end = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = journal.dateTime.toDayOfMonth(),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = journal.dateTime.toShortMonth(),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 1.sp
-                )
-            }
+            TimelineDateColumn(dateTime = journal.dateTime)
             Spacer(modifier = Modifier.width(4.dp))
             Column(
                 modifier = Modifier.weight(1f),
@@ -163,20 +151,20 @@ fun TimelineJournalTile(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        MetadataBadge(
+                        JuneBadge(
                             show = mediaCount > 0,
                             icon = R.drawable.photo_24px,
                             label = if (mediaCount > 1) "$mediaCount" else null
                         )
-                        MetadataBadge(
+                        JuneBadge(
                             show = hasMusic,
                             icon = R.drawable.music_note_24px
                         )
-                        MetadataBadge(
+                        JuneBadge(
                             show = hasLocation,
                             icon = R.drawable.location_on_24px
                         )
-                        MetadataBadge(
+                        JuneBadge(
                             show = tagCount > 0,
                             icon = R.drawable.sell_24px,
                             label = "$tagCount"
