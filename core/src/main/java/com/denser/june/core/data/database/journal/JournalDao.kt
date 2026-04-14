@@ -52,8 +52,7 @@ interface JournalDao {
             id IN (
                 SELECT ref.id 
                 FROM journal_tag_cross_ref ref 
-                INNER JOIN tags t ON ref.tagId = t.tagId 
-                WHERE t.name LIKE '%' || :query || '%'
+                WHERE ref.tagName LIKE '%' || :query || '%'
             ) OR
         (
             (CASE strftime('%m', dateTime / 1000, 'unixepoch')
@@ -98,8 +97,7 @@ interface JournalDao {
     @Query("""
         SELECT j.* FROM journals j
         INNER JOIN journal_tag_cross_ref ref ON j.id = ref.id
-        INNER JOIN tags t ON ref.tagId = t.tagId
-        WHERE t.name = :tagName AND j.deletedAt IS NULL
+        WHERE ref.tagName = :tagName AND j.deletedAt IS NULL
         ORDER BY j.dateTime DESC, j.createdAt DESC
     """)
     fun getJournalsByTagName(tagName: String): Flow<List<JournalEntity>>
@@ -108,16 +106,12 @@ interface JournalDao {
     @Query("""
         SELECT j.* FROM journals j
         INNER JOIN journal_tag_cross_ref ref ON j.id = ref.id
-        INNER JOIN tags t ON ref.tagId = t.tagId
-        WHERE t.name = :tagName AND j.deletedAt IS NULL
+        WHERE ref.tagName = :tagName AND j.deletedAt IS NULL
     """)
     suspend fun getJournalsByTagNameSync(tagName: String): List<JournalEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertTag(tag: TagEntity): Long
-
-    @Query("SELECT tagId FROM tags WHERE name = :name LIMIT 1")
-    suspend fun getTagIdByName(name: String): Long?
+    suspend fun insertTag(tag: TagEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertJournalTagCrossRef(crossRef: JournalTagCrossRef)
@@ -131,16 +125,16 @@ interface JournalDao {
     @Query("DELETE FROM tags")
     suspend fun deleteAllTags()
 
-    @Query("DELETE FROM tags WHERE tagId NOT IN (SELECT DISTINCT tagId FROM journal_tag_cross_ref)")
+    @Query("DELETE FROM tags WHERE name NOT IN (SELECT DISTINCT tagName FROM journal_tag_cross_ref)")
     suspend fun deleteOrphanedTags()
 
     @Query("""
         SELECT t.name 
         FROM tags t
-        INNER JOIN journal_tag_cross_ref ref ON t.tagId = ref.tagId
+        INNER JOIN journal_tag_cross_ref ref ON t.name = ref.tagName
         INNER JOIN journals j ON ref.id = j.id
         WHERE t.name LIKE :query || '%' AND j.deletedAt IS NULL
-        GROUP BY t.tagId
+        GROUP BY t.name
         ORDER BY MAX(j.dateTime) DESC, MAX(j.createdAt) DESC, t.name ASC
     """)
     fun getTagSuggestions(query: String): Flow<List<String>>
@@ -148,10 +142,10 @@ interface JournalDao {
     @Query("""
         SELECT t.name 
         FROM tags t
-        INNER JOIN journal_tag_cross_ref ref ON t.tagId = ref.tagId
+        INNER JOIN journal_tag_cross_ref ref ON t.name = ref.tagName
         INNER JOIN journals j ON ref.id = j.id
         WHERE j.deletedAt IS NULL
-        GROUP BY t.tagId
+        GROUP BY t.name
         ORDER BY MAX(j.dateTime) DESC, MAX(j.createdAt) DESC, t.name ASC
     """)
     fun getAllUniqueTags(): Flow<List<String>>
@@ -159,7 +153,7 @@ interface JournalDao {
     @Query("""
         SELECT t.name, COUNT(ref.id) as count
         FROM tags t
-        INNER JOIN journal_tag_cross_ref ref ON t.tagId = ref.tagId
+        INNER JOIN journal_tag_cross_ref ref ON t.name = ref.tagName
         INNER JOIN journals j ON ref.id = j.id
         WHERE j.deletedAt IS NULL
         GROUP BY t.name
@@ -169,16 +163,18 @@ interface JournalDao {
     @Query("""
         SELECT j.* FROM journals j
         INNER JOIN journal_tag_cross_ref ref ON j.id = ref.id
-        INNER JOIN tags t ON ref.tagId = t.tagId
-        WHERE t.name IN (:tags) AND j.deletedAt IS NULL
+        WHERE ref.tagName IN (:tags) AND j.deletedAt IS NULL
         GROUP BY j.id
-        HAVING COUNT(DISTINCT t.name) = :tagCount
+        HAVING COUNT(DISTINCT ref.tagName) = :tagCount
         ORDER BY j.dateTime DESC, j.createdAt DESC
     """)
     fun getJournalsWithAllTags(tags: List<String>, tagCount: Int): Flow<List<JournalEntity>>
 
     @Query("UPDATE tags SET name = :newName WHERE name = :oldName")
     suspend fun updateTagName(oldName: String, newName: String)
+
+    @Query("UPDATE journal_tag_cross_ref SET tagName = :newName WHERE tagName = :oldName")
+    suspend fun updateTagCrossRefName(oldName: String, newName: String)
 
     @Query("DELETE FROM tags WHERE name = :tagName")
     suspend fun deleteTag(tagName: String)
@@ -230,8 +226,7 @@ interface JournalDao {
         SET updatedAt = :timestamp 
         WHERE id IN (
             SELECT ref.id FROM journal_tag_cross_ref ref
-            INNER JOIN tags t ON ref.tagId = t.tagId
-            WHERE t.name = :tagName
+            WHERE ref.tagName = :tagName
         )
     """)
     suspend fun bumpJournalTimestampsByTag(tagName: String, timestamp: Long)

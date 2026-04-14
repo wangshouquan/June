@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.debounce
 import com.denser.june.core.data.sync.SyncWorker
+import com.denser.june.core.data.database.journal.JournalDatabase
 import kotlinx.coroutines.FlowPreview
 import java.io.File
 
@@ -473,7 +474,7 @@ class SyncManager(
         return SyncManifest(
             lastSyncTime = System.currentTimeMillis(),
             lastSyncDeviceId = devId,
-            databaseVersion = 3,
+            databaseVersion = JournalDatabase.VERSION,
             schemaVersion = 1,
             totalJournals = total,
             totalMedia = totalMedia

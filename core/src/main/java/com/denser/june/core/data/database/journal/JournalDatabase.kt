@@ -10,13 +10,14 @@ import androidx.room.RoomDatabase
         JournalTagCrossRef::class,
         DeletedJournalTombstone::class
     ],
-    version = 3,
+    version = JournalDatabase.VERSION,
     exportSchema = true
 )
 abstract class JournalDatabase : RoomDatabase() {
     abstract fun journalDao(): JournalDao
 
     companion object {
+        const val VERSION = 4
         const val DB_NAME = "journal_database"
     }
 }

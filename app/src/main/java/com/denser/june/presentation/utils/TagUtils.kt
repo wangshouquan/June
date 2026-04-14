@@ -56,8 +56,8 @@ object TagUtils {
             )
 
             TagCategory.People -> CategoryUiSpec(
-                iconRes = R.drawable.person_24px,
-                filledIconRes = R.drawable.person_24px_fill,
+                iconRes = R.drawable.groups_24px,
+                filledIconRes = R.drawable.groups_24px_fill,
                 color = MaterialTheme.colorScheme.primary,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 emptyMessage = "Who was there? (@name)",
@@ -69,8 +69,8 @@ object TagUtils {
                 filledIconRes = R.drawable.cards_stack_24px_fill,
                 color = MaterialTheme.colorScheme.tertiary,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                emptyMessage = "What is this about? (#topic)",
-                description = "Specific subjects like #Fitness, #Ideas, or #Hobbies."
+                emptyMessage = "Capture any specifics (#topic)",
+                description = "Note the moods, settings, or details of your day."
             )
         }
     }

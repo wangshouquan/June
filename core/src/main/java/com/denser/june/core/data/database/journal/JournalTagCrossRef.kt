@@ -5,10 +5,10 @@ import androidx.room.Index
 
 @Entity(
     tableName = "journal_tag_cross_ref",
-    primaryKeys = ["id", "tagId"],
-    indices = [Index("tagId")]
+    primaryKeys = ["id", "tagName"],
+    indices = [Index("tagName")]
 )
 data class JournalTagCrossRef(
     val id: String,
-    val tagId: Long
+    val tagName: String
 )

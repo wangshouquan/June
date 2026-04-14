@@ -2,7 +2,6 @@ package com.denser.june.core.data.repository
 
 import android.content.Context
 import com.denser.june.core.data.database.journal.JournalDao
-import com.denser.june.core.data.database.journal.TagCount
 import com.denser.june.core.data.database.journal.TagEntity
 import com.denser.june.core.data.database.journal.JournalTagCrossRef
 import com.denser.june.core.data.database.journal.DeletedJournalTombstone
@@ -109,18 +108,10 @@ class JournalRepositoryImpl(
     private suspend fun updateJournalTags(journal: Journal) {
         journalDao.deleteTagsForJournal(journal.id)
         journal.tags.forEach { tagName ->
-            val trimmedName = tagName.trim()
-            if (trimmedName.isNotBlank()) {
-                var tagId = journalDao.getTagIdByName(trimmedName)
-                if (tagId == null) {
-                    tagId = journalDao.insertTag(TagEntity(name = trimmedName))
-                }
-                if (tagId == -1L) {
-                    tagId = journalDao.getTagIdByName(trimmedName)
-                }
-                if (tagId != null && tagId != -1L) {
-                    journalDao.insertJournalTagCrossRef(JournalTagCrossRef(id = journal.id, tagId = tagId))
-                }
+            val trimmed = tagName.trim()
+            if (trimmed.isNotBlank()) {
+                journalDao.insertTag(TagEntity(name = trimmed))
+                journalDao.insertJournalTagCrossRef(JournalTagCrossRef(id = journal.id, tagName = trimmed))
             }
         }
         journalDao.deleteOrphanedTags()
@@ -142,8 +133,23 @@ class JournalRepositoryImpl(
     }
 
     override suspend fun renameTag(oldName: String, newName: String) {
+        val timestamp = System.currentTimeMillis()
+        
         journalDao.updateTagName(oldName, newName)
-        journalDao.bumpJournalTimestampsByTag(newName, System.currentTimeMillis())
+        journalDao.updateTagCrossRefName(oldName, newName)
+        
+        val journalsToUpdate = journalDao.getJournalsByTagNameSync(newName)
+        journalsToUpdate.forEach { entity ->
+            val updatedTags = entity.tags.map { if (it == oldName) newName else it }
+            if (updatedTags != entity.tags) {
+                journalDao.updateJournal(entity.copy(
+                    tags = updatedTags, 
+                    updatedAt = timestamp
+                ))
+            }
+        }
+        
+        journalDao.bumpJournalTimestampsByTag(newName, timestamp)
     }
 
     override suspend fun deleteTag(tagName: String) {

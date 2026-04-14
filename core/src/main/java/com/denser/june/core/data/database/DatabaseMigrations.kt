@@ -85,4 +85,42 @@ object DatabaseMigrations {
             """.trimIndent())
         }
     }
+
+    val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS `tags_new` (
+                    `name` TEXT NOT NULL,
+                    PRIMARY KEY(`name`)
+                )
+            """.trimIndent())
+
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS `journal_tag_cross_ref_new` (
+                    `id` TEXT NOT NULL,
+                    `tagName` TEXT NOT NULL,
+                    PRIMARY KEY(`id`, `tagName`)
+                )
+            """.trimIndent())
+
+            db.execSQL("""
+                INSERT OR IGNORE INTO journal_tag_cross_ref_new (id, tagName)
+                SELECT ref.id, t.name
+                FROM journal_tag_cross_ref ref
+                INNER JOIN tags t ON ref.tagId = t.tagId
+            """.trimIndent())
+
+            db.execSQL("""
+                INSERT OR IGNORE INTO tags_new (name)
+                SELECT DISTINCT name FROM tags
+            """.trimIndent())
+
+            db.execSQL("DROP TABLE journal_tag_cross_ref")
+            db.execSQL("ALTER TABLE journal_tag_cross_ref_new RENAME TO journal_tag_cross_ref")
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_journal_tag_cross_ref_tagName` ON `journal_tag_cross_ref` (`tagName`)")
+
+            db.execSQL("DROP TABLE tags")
+            db.execSQL("ALTER TABLE tags_new RENAME TO tags")
+        }
+    }
 }

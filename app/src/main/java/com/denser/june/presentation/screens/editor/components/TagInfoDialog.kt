@@ -46,7 +46,7 @@ fun TagInfoDialog(onDismiss: () -> Unit) {
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
-                    "Tag entries by spaces, people and themes to find them later.",
+                    "Tag entries by spaces, people and topics to find them later.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth()
