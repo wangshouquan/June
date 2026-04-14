@@ -111,7 +111,7 @@ fun JuneLinkSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
         Column(

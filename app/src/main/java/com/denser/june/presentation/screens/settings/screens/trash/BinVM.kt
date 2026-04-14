@@ -37,4 +37,10 @@ class BinVM(
     fun toggleBookmark(id: String) {
         viewModelScope.launch { repository.toggleBookmark(id) }
     }
+
+    fun deletePermanently(id: String) {
+        viewModelScope.launch {
+            repository.hardDeleteJournal(id)
+        }
+    }
 }

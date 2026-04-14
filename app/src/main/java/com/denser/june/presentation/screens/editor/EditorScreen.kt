@@ -496,7 +496,7 @@ fun JournalScreen() {
         ModalBottomSheet(
             onDismissRequest = { showOptionsSheet = false },
             sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             JournalOptionsSheet(
                 journal = journalPreview,

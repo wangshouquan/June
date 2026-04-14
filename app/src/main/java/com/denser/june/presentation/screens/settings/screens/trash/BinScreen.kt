@@ -23,6 +23,7 @@ import com.denser.june.presentation.screens.home.components.JournalCard
 import com.denser.june.presentation.screens.home.components.RecentJournalCard
 import com.denser.june.presentation.components.JuneConfirmationDialog
 import com.denser.june.presentation.screens.home.components.JournalOptionsSheet
+import com.denser.june.presentation.screens.home.components.DeleteConfirmationSheet
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -37,6 +38,8 @@ fun BinScreen() {
     var showMenu by remember { mutableStateOf(false) }
     var showEmptyBinDialog by remember { mutableStateOf(false) }
     var showRestoreAllDialog by remember { mutableStateOf(false) }
+    var showPermanentDeleteConfirmation by remember { mutableStateOf(false) }
+    var journalToDeletePermanently by remember { mutableStateOf<Journal?>(null) }
 
     var selectedJournalForOptions by remember { mutableStateOf<Journal?>(null) }
     val optionsSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -216,14 +219,36 @@ fun BinScreen() {
             ModalBottomSheet(
                 onDismissRequest = { selectedJournalForOptions = null },
                 sheetState = optionsSheetState,
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
             ) {
                 JournalOptionsSheet(
                     journal = currentJournalForOptions,
                     onToggleBookmark = { dismissOptionsSheet { binVM.toggleBookmark(currentJournalForOptions.id) } },
-                    onDeleteOrRestore = { dismissOptionsSheet { binVM.restoreJournal(currentJournalForOptions.id) } }
+                    onDeleteOrRestore = { dismissOptionsSheet { binVM.restoreJournal(currentJournalForOptions.id) } },
+                    onPermanentDelete = {
+                        dismissOptionsSheet {
+                            journalToDeletePermanently = currentJournalForOptions
+                            showPermanentDeleteConfirmation = true
+                        }
+                    }
                 )
             }
+        }
+
+        if (showPermanentDeleteConfirmation && journalToDeletePermanently != null) {
+            DeleteConfirmationSheet(
+                onDismissRequest = {
+                    showPermanentDeleteConfirmation = false
+                    journalToDeletePermanently = null
+                },
+                onConfirm = {
+                    binVM.deletePermanently(journalToDeletePermanently!!.id)
+                    showPermanentDeleteConfirmation = false
+                    journalToDeletePermanently = null
+                },
+                message = "Permanently delete this journal? This action cannot be undone.",
+                confirmText = "Permanently Delete"
+            )
         }
 
     }

@@ -113,7 +113,7 @@ fun HomeScreen() {
                     .padding(innerPadding)
             ) { page ->
                 when (HomeTab.entries[page]) {
-                    HomeTab.Journals -> JournalsPage()
+                    HomeTab.Journals -> JournalsPage(isSelected = pagerState.currentPage == 0)
                     HomeTab.Tags -> TagsPage()
                     HomeTab.Timeline -> TimelinePage()
                 }

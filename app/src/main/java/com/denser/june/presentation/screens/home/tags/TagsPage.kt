@@ -306,7 +306,7 @@ fun TagsPage() {
             ModalBottomSheet(
                 onDismissRequest = { selectedJournalForOptions = null },
                 sheetState = optionsSheetState,
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
             ) {
                 JournalOptionsSheet(
                     journal = currentJournalForOptions,

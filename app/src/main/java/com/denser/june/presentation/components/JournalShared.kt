@@ -36,6 +36,7 @@ fun JuneBadge(
                 modifier = Modifier.size(11.dp)
             )
             if (label != null) {
+                Spacer(Modifier.width(2.dp))
                 Text(
                     text = label,
                     style = MaterialTheme.typography.labelSmall,

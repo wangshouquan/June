@@ -27,12 +27,16 @@ import java.util.Locale
 import com.denser.june.presentation.components.JuneBadge
 import com.denser.june.presentation.components.JuneMetadataRow
 import java.util.Date
+import com.denser.june.presentation.utils.TagUtils
+import com.denser.june.core.domain.model.enums.TagCategory
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun JournalOptionsSheet(
     journal: Journal,
     onToggleBookmark: () -> Unit,
-    onDeleteOrRestore: () -> Unit
+    onDeleteOrRestore: () -> Unit,
+    onPermanentDelete: (() -> Unit)? = null
 ) {
     val wordCount = remember(journal.content) {
         if (journal.content.isBlank()) 0
@@ -42,126 +46,191 @@ fun JournalOptionsSheet(
         SimpleDateFormat("yyyy", Locale.getDefault()).format(Date(journal.dateTime))
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp)
-            .verticalScroll(rememberScrollState())
+    val spacesTags = remember(journal.tags) { TagUtils.filterTagsByCategory(journal.tags, TagCategory.Spaces) }
+    val peopleTags = remember(journal.tags) { TagUtils.filterTagsByCategory(journal.tags, TagCategory.People) }
+    val topicsTags = remember(journal.tags) { TagUtils.filterTagsByCategory(journal.tags, TagCategory.Topics) }
+
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainer,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(bottom = 16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(end = 16.dp)
-            ) {
-                Text(
-                    text = journal.dateTime.toDayOfMonth(),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = journal.dateTime.toShortMonth().uppercase(),
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 1.5.sp
-                )
-                Text(
-                    text = year,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                )
-            }
-
-            Column(
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 12.dp)
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
+                verticalAlignment = Alignment.Top
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(end = 16.dp)
                 ) {
                     Text(
-                        text = journal.title.ifBlank { "Untitled" },
-                        style = MaterialTheme.typography.titleLarge,
+                        text = journal.dateTime.toDayOfMonth(),
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f, fill = false)
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = journal.dateTime.toShortMonth().uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        letterSpacing = 1.5.sp
+                    )
+                    Text(
+                        text = year,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                     )
                 }
-                Spacer(modifier = Modifier.height(6.dp))
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 12.dp, top = 2.dp)
                 ) {
-                    JuneBadge(show = journal.images.isNotEmpty(), icon = R.drawable.photo_24px, label = "${journal.images.size}")
-                    JuneBadge(show = journal.songDetails != null, icon = R.drawable.music_note_24px)
-                    JuneBadge(show = journal.location != null, icon = R.drawable.location_on_24px)
-                    JuneBadge(show = journal.tags.isNotEmpty(), icon = R.drawable.sell_24px, label = "${journal.tags.size}")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = journal.title.ifBlank { "Untitled" },
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        JuneBadge(
+                            show = true,
+                            icon = if (journal.cloudId != null) R.drawable.cloud_24px else R.drawable.devices_24px,
+                            label = if (journal.cloudId != null) "Cloud" else "Local"
+                        )
+                        JuneBadge(show = journal.images.isNotEmpty(), icon = R.drawable.photo_24px, label = "${journal.images.size}")
+                        JuneBadge(show = journal.songDetails != null, icon = R.drawable.music_note_24px)
+                        JuneBadge(show = journal.location != null, icon = R.drawable.location_on_24px)
+                    }
+                }
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (!journal.isDeleted) {
+                        ActionSquircle(
+                            iconRes = if (journal.isBookmarked) R.drawable.bookmark_added_24px_fill else R.drawable.bookmark_24px,
+                            contentDescription = if (journal.isBookmarked) "Remove Bookmark" else "Bookmark",
+                            onClick = onToggleBookmark,
+                            isActive = journal.isBookmarked,
+                            activeColor = MaterialTheme.colorScheme.primaryContainer,
+                            activeContentColor = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    ActionSquircle(
+                        iconRes = if (journal.isDeleted) R.drawable.restore_from_trash_24px else R.drawable.delete_24px,
+                        contentDescription = if (journal.isDeleted) "Restore" else "Delete",
+                        onClick = onDeleteOrRestore,
+                        tint = if (journal.isDeleted) MaterialTheme.colorScheme.primary
+                               else MaterialTheme.colorScheme.error
+                    )
+                    if (journal.isDeleted && onPermanentDelete != null) {
+                        ActionSquircle(
+                            iconRes = R.drawable.delete_24px,
+                            contentDescription = "Permanent Delete",
+                            onClick = onPermanentDelete,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                ActionSquircle(
-                    iconRes = if (journal.isBookmarked) R.drawable.bookmark_added_24px_fill else R.drawable.bookmark_24px,
-                    contentDescription = if (journal.isBookmarked) "Remove Bookmark" else "Bookmark",
-                    onClick = onToggleBookmark,
-                    isActive = journal.isBookmarked,
-                    activeColor = MaterialTheme.colorScheme.primaryContainer,
-                    activeContentColor = MaterialTheme.colorScheme.primary
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 20.dp)
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AssistChip(
+                    onClick = {},
+                    label = { Text("$wordCount words", style = MaterialTheme.typography.labelMedium) },
+                    leadingIcon = { Icon(painterResource(R.drawable.article_24px), null, modifier = Modifier.size(16.dp)) },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = AssistChipDefaults.assistChipColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        leadingIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    ),
+                    border = null
                 )
-                ActionSquircle(
-                    iconRes = if (journal.isDeleted) R.drawable.restore_from_trash_24px else R.drawable.delete_24px,
-                    contentDescription = if (journal.isDeleted) "Restore" else "Delete",
-                    onClick = onDeleteOrRestore,
-                    tint = if (journal.isDeleted) MaterialTheme.colorScheme.primary
-                           else MaterialTheme.colorScheme.error
+
+                spacesTags.forEach { tag ->
+                    SuggestionChip(
+                        onClick = {},
+                        label = { Text(tag, style = MaterialTheme.typography.labelMedium) },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TagUtils.getTagSuggestionChipColors(tag),
+                        border = null
+                    )
+                }
+                peopleTags.forEach { tag ->
+                    SuggestionChip(
+                        onClick = {},
+                        label = { Text(tag, style = MaterialTheme.typography.labelMedium) },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TagUtils.getTagSuggestionChipColors(tag),
+                        border = null
+                    )
+                }
+                topicsTags.forEach { tag ->
+                    SuggestionChip(
+                        onClick = {},
+                        label = { Text(tag, style = MaterialTheme.typography.labelMedium) },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TagUtils.getTagSuggestionChipColors(tag),
+                        border = null
+                    )
+                }
+            }
+
+            Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+                JuneMetadataRow(
+                    iconRes = R.drawable.cloud_sync_24px,
+                    label = "Synced",
+                    value = journal.syncedAt?.toFullDateTime() ?: "Not synced"
+                )
+                JuneMetadataRow(
+                    iconRes = R.drawable.today_24px,
+                    label = "Created",
+                    value = journal.createdAt.toFullDateTime()
+                )
+                JuneMetadataRow(
+                    iconRes = R.drawable.history_24px,
+                    label = "Updated",
+                    value = journal.updatedAt?.toFullDateTime() ?: "—"
                 )
             }
-        }
-
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-        )
-
-        Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp)) {
-            JuneMetadataRow(
-                iconRes = R.drawable.article_24px,
-                label = "Words",
-                value = "$wordCount keywords"
-            )
-            JuneMetadataRow(
-                iconRes = if (journal.cloudId != null) R.drawable.cloud_24px else R.drawable.cloud_off_24px,
-                label = "Sync",
-                value = if (journal.cloudId != null) "Cloud" else "Local only"
-            )
-            JuneMetadataRow(
-                iconRes = R.drawable.cloud_sync_24px,
-                label = "Synced",
-                value = journal.syncedAt?.toFullDateTime() ?: "Not synced"
-            )
-            JuneMetadataRow(
-                iconRes = R.drawable.today_24px,
-                label = "Created",
-                value = journal.createdAt.toFullDateTime()
-            )
-            JuneMetadataRow(
-                iconRes = R.drawable.history_24px,
-                label = "Updated",
-                value = journal.updatedAt?.toFullDateTime() ?: "—"
-            )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ActionSquircle(
     modifier: Modifier = Modifier,
@@ -175,16 +244,16 @@ private fun ActionSquircle(
 ) {
     Surface(
         onClick = onClick,
-        modifier = modifier.size(48.dp),
-        shape = RoundedCornerShape(14.dp),
-        color = if (isActive) activeColor else MaterialTheme.colorScheme.surfaceContainerHigh,
+        modifier = modifier.size(40.dp),
+        shape = IconButtonDefaults.smallRoundShape,
+        color = if (isActive) activeColor else MaterialTheme.colorScheme.surfaceContainerLow,
         contentColor = if (isActive) activeContentColor else tint
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 painter = painterResource(iconRes),
                 contentDescription = contentDescription,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
     }

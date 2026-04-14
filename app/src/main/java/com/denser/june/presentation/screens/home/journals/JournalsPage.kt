@@ -1,5 +1,6 @@
 package com.denser.june.presentation.screens.home.journals
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -40,7 +41,9 @@ enum class JournalListTab(
     ExperimentalMaterial3Api::class
 )
 @Composable
-fun JournalsPage() {
+fun JournalsPage(
+    isSelected: Boolean = true
+) {
     val viewModel: JournalsVM = koinViewModel()
     val nonDrafts by viewModel.nonDraftJournals.collectAsStateWithLifecycle()
     val bookmarkedJournals by viewModel.bookmarkedJournals.collectAsStateWithLifecycle()
@@ -55,6 +58,10 @@ fun JournalsPage() {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val deleteSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
+
+    BackHandler(enabled = isSelected && selectedTab != JournalListTab.Journals) {
+        viewModel.onTabSelected(JournalListTab.Journals)
+    }
 
     fun dismissSheet(action: () -> Unit) {
         action()
@@ -74,7 +81,7 @@ fun JournalsPage() {
         ModalBottomSheet(
             onDismissRequest = { selectedJournalForOptions = null },
             sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             JournalOptionsSheet(
                 journal = currentJournalForOptions,

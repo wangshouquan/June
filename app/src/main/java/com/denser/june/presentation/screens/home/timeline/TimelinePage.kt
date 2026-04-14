@@ -72,7 +72,7 @@ fun TimelinePage(
         ModalBottomSheet(
             onDismissRequest = { selectedJournalForOptions = null },
             sheetState = sheetState,
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
         ) {
             JournalOptionsSheet(
                 journal = currentJournalForOptions,

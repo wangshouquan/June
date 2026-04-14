@@ -15,6 +15,8 @@ import com.denser.june.core.R
 fun DeleteConfirmationSheet(
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
+    message: String = "Move to bin? It will be permanently deleted after 30 days.",
+    confirmText: String = "Move to bin",
     sheetState: SheetState = rememberModalBottomSheetState()
 ) {
     ModalBottomSheet(
@@ -31,7 +33,7 @@ fun DeleteConfirmationSheet(
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 20.dp),
-                text = "Move to bin? It will be permanently deleted after 30 days.",
+                text = message,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -54,7 +56,7 @@ fun DeleteConfirmationSheet(
                         modifier = Modifier.size(24.dp)
                     )
                     Text(
-                        text = "Move to bin",
+                        text = confirmText,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.error
                     )
