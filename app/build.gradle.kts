@@ -18,9 +18,9 @@ val appNamespace = "com.denser.june"
 val apkNamePrefix = "june"
 
 val versionMajor = 0
-val versionMinor = 7
+val versionMinor = 8
 val versionPatch = 0
-val appVersionCode = 9
+val appVersionCode = 10
 val appVersionName = "$versionMajor.$versionMinor.$versionPatch"
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -153,9 +153,7 @@ configurations.all {
     exclude(group = "org.jetbrains", module = "annotations-java5")
 }
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-}
+
 
 dependencies {
     // Core

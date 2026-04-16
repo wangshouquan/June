@@ -17,7 +17,7 @@
         <img src="https://img.shields.io/github/downloads/DenserMeerkat/June/total?logo=github&style=for-the-badge" alt="Total Downloads">
     </a>
     <a href="https://github.com/DenserMeerkat/June/releases">
-        <img src="https://img.shields.io/github/license/DenserMeerkat/June?style=for-the-badge&color=green" alt="License">
+        <img src="https://img.shields.io/github/license/DenserMeerkat/June?style=for-the-badge&color=blue" alt="License">
     </a>
 </p>
 
@@ -48,13 +48,15 @@ June is designed to be more than just text—it's a multimedia capsule of your l
 
 - **Unified Timeline:** Navigate your past through a Month View calendar. See your **media, songs, and locations** all in one place within a seamless flow.
 - **Visual Habits:** Keep your momentum going with calendar **streaks** and writing indicators that visualize your consistency.
+- **Journal Reminders:** Personalized notification manager with flexible timing and frequency to keep your journaling habit on track.
 - **Smart Search & Filtering:** Instantly locate memories by searching through content and dates, or use the advanced filter menu to combine multiple tags (such as `@John` and `#Travel`) to retrieve highly specific entries.
 
 ### Secure & Styled
 
-- **Privacy Vault:** Keep your thoughts for your eyes only with multiple locking options. Choose between fast Biometric Unlock (Fingerprint/Face) or a dedicated Custom PIN that exists independently of your phone's system lock.
-- **Expressive Theming:** Enjoy a personalized look with **Dynamic Wallpaper Colors (Material You)** or curated custom themes.
+- **Privacy Vault:** Secure your entries with Biometric Unlock or a custom PIN. Includes screen capture and recents menu protection.
+- **Expressive Theming:** Enjoy a personalized look with **Dynamic Wallpaper Colors (Material You)**.
 - **Total Ownership:** 100% offline architecture with full Backup & Restore capabilities—your data never leaves your device unless you choose to sync it.
+- **Network Toggle:** Full control over your connectivity. Turn off all external network access if you prefer not to fetch song metadata or use online map services.
 - **Cloud Sync:** Keep your journal in sync across devices using **WebDAV**. Maintain 100% privacy by using your own Nextcloud, ownCloud, or any WebDAV provider.
 
 ## Tech Stack
@@ -119,3 +121,11 @@ June uses **MapTiler** for map rendering.
 2. Select the debug build variant (default).
 3. Click Run.
    > Note: You do not need `keystore.properties` to build the debug version. That file is only required for signing release/beta builds.
+
+## Security
+
+SHA-256 fingerprint for the signing certificate used for github releases
+
+```
+E8:21:01:FC:C2:20:98:61:AF:DF:81:1C:03:12:F6:2A:A5:BA:8B:E3:10:E1:D2:74:C6:91:CE:6E:B5:D1:B7:BB
+```
