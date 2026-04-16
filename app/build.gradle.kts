@@ -35,6 +35,11 @@ if (localPropertiesFile.exists()) {
     localProperties.load(FileInputStream(localPropertiesFile))
 }
 
+val storeFileVar = System.getenv("RELEASE_STORE_FILE") ?: keystoreProperties["storeFile"] as String?
+val storePasswordVar = System.getenv("RELEASE_STORE_PASSWORD") ?: keystoreProperties["storePassword"] as String?
+val keyAliasVar = System.getenv("RELEASE_KEY_ALIAS") ?: keystoreProperties["keyAlias"] as String?
+val keyPasswordVar = System.getenv("RELEASE_KEY_PASSWORD") ?: keystoreProperties["keyPassword"] as String?
+
 android {
     namespace = appNamespace
     compileSdk = 36
@@ -51,7 +56,9 @@ android {
             useSupportLibrary = true
         }
 
-        val mapTilerKey = localProperties.getProperty("MAPTILER_API_KEY") ?: ""
+        val mapTilerKey = (localProperties.getProperty("MAPTILER_API_KEY") 
+            ?: System.getenv("MAPTILER_API_KEY") 
+            ?: "").trim()
         buildConfigField("String", "MAPTILER_API_KEY", "\"$mapTilerKey\"")
         manifestPlaceholders["MAPTILER_API_KEY"] = mapTilerKey
     }
@@ -71,10 +78,10 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String?
-            keyPassword = keystoreProperties["keyPassword"] as String?
-            storePassword = keystoreProperties["storePassword"] as String?
-            storeFile = (keystoreProperties["storeFile"] as String?)?.let { file(it) }
+            keyAlias = keyAliasVar
+            keyPassword = keyPasswordVar
+            storePassword = storePasswordVar
+            storeFile = storeFileVar?.let { file(it) }
         }
     }
 
