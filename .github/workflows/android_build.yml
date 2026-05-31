@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
+      attestations: write
 
     steps:
     - uses: actions/checkout@v4
@@ -45,6 +47,11 @@ jobs:
       with:
         name: release-apk
         path: app/build/outputs/apk/release/*.apk
+
+    - name: Generate Artifact Attestation
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: 'app/build/outputs/apk/release/*.apk'
 
     - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')

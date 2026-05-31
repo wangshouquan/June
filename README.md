@@ -42,7 +42,7 @@ June is designed to be more than just text—it's a multimedia capsule of your l
 - **Smart Organization:** Intelligently categorize your entries using three distinct tag groups: **Spaces**, **People**, and **Topics**.
 - **Soundtrack Support:** Paste a link from any major streaming platform (Spotify, Apple Music, etc.), and June automatically fetches the cover art and song details.
 - **Mood Tracking:** Tag entries with emojis to log your emotional journey and personal growth over time.
-- **Rich Text Editing:** Style your entries with full support for bold, italics, underline, highlight and more.
+- **Rich Text Editing:** Style your entries with full support for bold, italics, underline, highlight, and **tag autocompletion**.
 
 ### Relive Your History
 
@@ -54,7 +54,7 @@ June is designed to be more than just text—it's a multimedia capsule of your l
 ### Secure & Styled
 
 - **Privacy Vault:** Secure your entries with Biometric Unlock or a custom PIN. Includes screen capture and recents menu protection.
-- **Expressive Theming:** Enjoy a personalized look with **Dynamic Wallpaper Colors (Material You)**.
+- **Expressive Theming:** Enjoy a personalized look with **Dynamic Wallpaper Colors (Material You)** and custom **Font Selection**.
 - **Total Ownership:** 100% offline architecture with full Backup & Restore capabilities—your data never leaves your device unless you choose to sync it.
 - **Network Toggle:** Full control over your connectivity. Turn off all external network access if you prefer not to fetch song metadata or use online map services.
 - **Cloud Sync:** Keep your journal in sync across devices using **WebDAV**. Maintain 100% privacy by using your own Nextcloud, ownCloud, or any WebDAV provider.
@@ -120,12 +120,21 @@ June uses **MapTiler** for map rendering.
 1. Open the project in Android Studio and let Gradle sync.
 2. Select the debug build variant (default).
 3. Click Run.
-   > Note: You do not need `keystore.properties` to build the debug version. That file is only required for signing release/beta builds.
 
-## Security
+## Security & Verifiability
 
-SHA-256 fingerprint for the signing certificate used for github releases
+### Signing Certificate
+SHA-256 fingerprint for the signing certificate used for GitHub releases:
 
 ```
 E8:21:01:FC:C2:20:98:61:AF:DF:81:1C:03:12:F6:2A:A5:BA:8B:E3:10:E1:D2:74:C6:91:CE:6E:B5:D1:B7:BB
 ```
+
+### Artifact Attestations
+All official APK releases built using our GitHub workflow include cryptographically signed **Artifact Attestations** (Build Provenance).
+
+* **Easy Verification (Browser):** Visit our [Releases](https://github.com/DenserMeerkat/June/releases) page. You will see a **"Verified"** or **"Attested"** badge next to the assets of each release. Click this badge to instantly view the build provenance, including the exact GitHub Action run and commit that generated that APK.
+* **CLI Verification (For Developers):** You can verify a downloaded APK locally using the GitHub CLI:
+  ```bash
+  gh attestation verify name-of-apk.apk --repo DenserMeerkat/June
+  ```
