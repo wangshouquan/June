@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.denser.june.core.R
 import com.denser.june.core.domain.model.enums.Fonts
 import com.denser.june.core.domain.model.enums.FontCategory
-import com.denser.june.presentation.screens.settings.googleFontsMetadata
+import com.denser.june.presentation.theme.googleFontsMetadata
 import com.denser.june.presentation.theme.getAppFontFamily
 
 @Composable

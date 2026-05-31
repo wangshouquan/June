@@ -31,8 +31,8 @@ import com.denser.june.core.R
 import com.denser.june.presentation.components.JuneDialog
 import com.denser.june.core.domain.backup.RestoreFailedException
 import com.denser.june.presentation.screens.settings.SettingsVM
-import com.denser.june.presentation.screens.settings.section.SettingSection
-import com.denser.june.presentation.screens.settings.section.SettingsItem
+import com.denser.june.presentation.screens.settings.components.SettingSection
+import com.denser.june.presentation.screens.settings.components.SettingsItem
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)

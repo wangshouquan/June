@@ -18,13 +18,18 @@ import com.denser.june.presentation.screens.editor.EditorScreen
 import com.denser.june.presentation.screens.editor.screens.ItemGalleryScreen
 import com.denser.june.presentation.screens.home.HomeScreen
 import com.denser.june.presentation.screens.search.SearchScreen
-import com.denser.june.presentation.screens.settings.FontSelectionScreen
+import com.denser.june.presentation.screens.settings.screens.FontSelectionScreen
 import com.denser.june.presentation.screens.settings.SettingsScreen
 import com.denser.june.presentation.screens.settings.screens.AboutLibrariesScreen
 import com.denser.june.presentation.screens.settings.screens.BackupScreen
 import com.denser.june.presentation.screens.settings.screens.LockMethodScreen
 import com.denser.june.presentation.screens.settings.screens.PermissionsScreen
 import com.denser.june.presentation.screens.settings.screens.PinSetupScreen
+import com.denser.june.presentation.screens.settings.screens.GeneralSettingsScreen
+import com.denser.june.presentation.screens.settings.screens.AppearanceSettingsScreen
+import com.denser.june.presentation.screens.settings.screens.PrivacySecuritySettingsScreen
+import com.denser.june.presentation.screens.settings.screens.SyncBackupSettingsScreen
+import com.denser.june.presentation.screens.settings.screens.AboutSettingsScreen
 import com.denser.june.presentation.screens.settings.screens.reminder.ReminderScreen
 import com.denser.june.presentation.screens.settings.screens.sync.SyncScreen
 import com.denser.june.presentation.screens.settings.screens.trash.BinScreen
@@ -104,6 +109,26 @@ fun JuneNavHost(
 
         composable<Route.Settings> {
             SettingsScreen()
+        }
+
+        composable<Route.GeneralSettings> {
+            GeneralSettingsScreen()
+        }
+
+        composable<Route.AppearanceSettings> {
+            AppearanceSettingsScreen()
+        }
+
+        composable<Route.PrivacySecuritySettings> {
+            PrivacySecuritySettingsScreen()
+        }
+
+        composable<Route.SyncBackupSettings> {
+            SyncBackupSettingsScreen()
+        }
+
+        composable<Route.AboutSettings> {
+            AboutSettingsScreen()
         }
 
         composable<Route.Backup> {

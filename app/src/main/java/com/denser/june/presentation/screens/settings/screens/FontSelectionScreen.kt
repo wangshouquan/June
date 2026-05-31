@@ -1,4 +1,4 @@
-package com.denser.june.presentation.screens.settings
+package com.denser.june.presentation.screens.settings.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,6 +12,8 @@ import com.denser.june.core.R
 import com.denser.june.core.domain.model.enums.FontType
 import com.denser.june.presentation.components.*
 import com.denser.june.presentation.navigation.AppNavigator
+import com.denser.june.presentation.screens.settings.SettingsAction
+import com.denser.june.presentation.screens.settings.SettingsVM
 import com.denser.june.presentation.screens.settings.components.FontSelector
 import com.denser.june.presentation.theme.LocalInternetAllowed
 import org.koin.compose.koinInject

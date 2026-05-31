@@ -1,4 +1,4 @@
-package com.denser.june.presentation.screens.settings.section
+package com.denser.june.presentation.screens.settings.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,11 +16,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -56,7 +56,7 @@ fun SettingsItem(
     title: String,
     subtitle: String? = null,
     leadingContent: (@Composable () -> Unit)? = null,
-    trailingContent: @Composable () -> Unit = {},
+    trailingContent: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
     onClick: () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit = {}
@@ -96,25 +96,84 @@ fun SettingsItem(
                     Text(
                         text = title,
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.fillMaxWidth()
                     )
                     if (subtitle != null) {
                         Text(
                             text = subtitle,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                Box(
-                    modifier = Modifier.defaultMinSize(minWidth = 40.dp, minHeight = 40.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    trailingContent()
+                if (trailingContent != null) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(
+                        modifier = Modifier.defaultMinSize(minWidth = 40.dp, minHeight = 40.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        trailingContent()
+                    }
                 }
             }
             content()
+        }
+    }
+}
+
+@Composable
+fun CategorySettingsItem(
+    title: String,
+    subtitle: String? = null,
+    leadingContent: (@Composable () -> Unit)? = null,
+    onClick: () -> Unit = {}
+) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .clickable(onClick = onClick)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp, 18.dp)
+        ) {
+            if (leadingContent != null) {
+                Box(
+                    modifier = Modifier
+                        .padding(end = 20.dp)
+                        .size(26.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    leadingContent()
+                }
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (subtitle != null) {
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
         }
     }
 }

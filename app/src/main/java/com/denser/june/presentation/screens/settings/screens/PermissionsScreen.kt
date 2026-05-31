@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -41,8 +42,8 @@ import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.components.JuneAppBarType
 import com.denser.june.presentation.components.JuneTopAppBar
 import com.denser.june.core.domain.preferences.PrivacyPreferences
-import com.denser.june.presentation.screens.settings.section.SettingSection
-import com.denser.june.presentation.screens.settings.section.SettingsItem
+import com.denser.june.presentation.screens.settings.components.SettingSection
+import com.denser.june.presentation.screens.settings.components.SettingsItem
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -213,7 +214,7 @@ fun PermissionsScreen() {
                         )
                     },
                     onClick = {
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                             if (!hasNotificationPermission) {
                                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                             } else {

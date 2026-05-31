@@ -13,7 +13,7 @@ import com.denser.june.core.R
 import com.denser.june.core.domain.sync.SyncAnalysis
 import com.denser.june.core.domain.sync.SyncStatus
 import com.denser.june.presentation.screens.settings.screens.sync.components.SyncAnalysisSection
-import com.denser.june.presentation.screens.settings.section.SettingsItem
+import com.denser.june.presentation.screens.settings.components.SettingsItem
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

@@ -46,6 +46,21 @@ sealed interface Route {
     data object Settings : Route
 
     @Serializable
+    data object GeneralSettings : Route
+
+    @Serializable
+    data object AppearanceSettings : Route
+
+    @Serializable
+    data object PrivacySecuritySettings : Route
+
+    @Serializable
+    data object SyncBackupSettings : Route
+
+    @Serializable
+    data object AboutSettings : Route
+
+    @Serializable
     data object AboutLibraries : Route
 
     @Serializable

@@ -6,8 +6,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import com.denser.june.core.R
-import com.denser.june.presentation.screens.settings.section.SettingSection
-import com.denser.june.presentation.screens.settings.section.SettingsItem
+import com.denser.june.presentation.screens.settings.components.SettingSection
+import com.denser.june.presentation.screens.settings.components.SettingsItem
 
 @Composable
 fun SyncGeneralSettings(

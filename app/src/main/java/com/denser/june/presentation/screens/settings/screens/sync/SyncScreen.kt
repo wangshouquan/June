@@ -20,8 +20,8 @@ import com.denser.june.core.domain.model.enums.TimeFormat
 import com.denser.june.presentation.components.JuneAppBarType
 import com.denser.june.presentation.components.JuneTopAppBar
 import com.denser.june.presentation.navigation.AppNavigator
-import com.denser.june.presentation.screens.settings.section.SettingSection
-import com.denser.june.presentation.screens.settings.section.SettingsItem
+import com.denser.june.presentation.screens.settings.components.SettingSection
+import com.denser.june.presentation.screens.settings.components.SettingsItem
 import com.denser.june.presentation.screens.settings.screens.sync.sections.SyncAdvancedSection
 import com.denser.june.presentation.screens.settings.screens.sync.sections.SyncGeneralSettings
 import com.denser.june.presentation.screens.settings.screens.sync.sections.SyncStatusCard

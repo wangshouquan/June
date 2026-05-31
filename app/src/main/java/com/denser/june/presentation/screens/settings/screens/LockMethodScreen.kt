@@ -43,8 +43,8 @@ import com.denser.june.presentation.components.JuneAppBarType
 import com.denser.june.presentation.components.JuneTopAppBar
 import com.denser.june.presentation.screens.settings.SettingsAction
 import com.denser.june.presentation.screens.settings.SettingsVM
-import com.denser.june.presentation.screens.settings.section.SettingSection
-import com.denser.june.presentation.screens.settings.section.SettingsItem
+import com.denser.june.presentation.screens.settings.components.SettingSection
+import com.denser.june.presentation.screens.settings.components.SettingsItem
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import com.denser.june.presentation.components.JuneDialog

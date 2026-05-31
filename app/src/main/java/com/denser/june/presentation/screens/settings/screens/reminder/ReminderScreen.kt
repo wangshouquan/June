@@ -25,8 +25,8 @@ import com.denser.june.presentation.components.JuneDateTimePickerMode
 import com.denser.june.core.utils.combineDateAndTime
 import com.denser.june.core.utils.toLocalTime
 import java.time.LocalDate
-import com.denser.june.presentation.screens.settings.section.SettingSection
-import com.denser.june.presentation.screens.settings.section.SettingsItem
+import com.denser.june.presentation.screens.settings.components.SettingSection
+import com.denser.june.presentation.screens.settings.components.SettingsItem
 import com.denser.june.core.utils.toFullTime
 import com.denser.june.core.domain.model.enums.TimeFormat
 import org.koin.compose.koinInject
