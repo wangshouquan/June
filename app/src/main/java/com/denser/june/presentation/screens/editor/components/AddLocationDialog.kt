@@ -34,6 +34,7 @@ import com.denser.june.presentation.components.MapControlColumn
 import com.denser.june.presentation.components.MapLocationPin
 import com.denser.june.presentation.components.MapAttributions
 import com.denser.june.presentation.components.InternetRestrictedBanner
+import com.denser.june.core.domain.preferences.JournalPreferences
 import com.denser.june.core.domain.preferences.PrivacyPreferences
 import com.denser.june.presentation.theme.LocalAppTheme
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -69,8 +70,11 @@ fun AddLocationDialog(
     onDismiss: () -> Unit
 ) {
     val privacyPreferences = koinInject<PrivacyPreferences>()
+    val journalPreferences = koinInject<JournalPreferences>()
     val isInternetAllowed by privacyPreferences.getIsInternetAllowedFlow()
         .collectAsStateWithLifecycle(initialValue = false)
+    val savedMapTheme by journalPreferences.mapTheme()
+        .collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -117,14 +121,21 @@ fun AddLocationDialog(
 
     val currentTheme = LocalAppTheme.current.themeMode
     val systemDark = isSystemInDarkTheme()
-    val initialMapTheme = remember(currentTheme, systemDark) {
-        when (currentTheme) {
-            ThemeMode.SYSTEM -> systemDark
+    val initialMapTheme = remember(savedMapTheme, currentTheme, systemDark) {
+        when (savedMapTheme) {
+            ThemeMode.SYSTEM -> when (currentTheme) {
+                ThemeMode.SYSTEM -> systemDark
+                ThemeMode.DARK -> true
+                ThemeMode.LIGHT -> false
+            }
             ThemeMode.DARK -> true
             ThemeMode.LIGHT -> false
         }
     }
     var isMapDarkMode by remember { mutableStateOf(initialMapTheme) }
+    LaunchedEffect(initialMapTheme) {
+        isMapDarkMode = initialMapTheme
+    }
     val mapStyleUrl = remember(isMapDarkMode) {
         if (isMapDarkMode) MapTilerUtils.STYLE_DARK else MapTilerUtils.STYLE_LIGHT
     }

@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.denser.june.core.domain.model.enums.ThemeMode
 import com.denser.june.core.domain.model.enums.TimeFormat
 import com.denser.june.core.domain.preferences.JournalPreferences
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,8 @@ class JournalPreferencesImpl(
         val REMINDER_TIME = stringPreferencesKey("reminder_time")
         val REMINDER_DAYS = stringPreferencesKey("reminder_days")
         val TIME_FORMAT = stringPreferencesKey("time_format")
+        val MAP_THEME = stringPreferencesKey("map_theme")
+        val MARKDOWN_ENABLED = booleanPreferencesKey("markdown_enabled")
         const val DEFAULT_REMINDER_TIME = "21:14"
     }
 
@@ -49,6 +52,7 @@ class JournalPreferencesImpl(
             preferences[START_OF_WEEK] = dayOfWeek.name
         }
     }
+
     override fun isReminderEnabled(): Flow<Boolean> = dataStore.data
         .map { it[REMINDER_ENABLED] ?: false }
 
@@ -90,6 +94,31 @@ class JournalPreferencesImpl(
     override suspend fun setTimeFormat(format: TimeFormat) {
         dataStore.edit { preferences ->
             preferences[TIME_FORMAT] = format.name
+        }
+    }
+
+    override fun mapTheme(): Flow<ThemeMode> = dataStore.data
+        .map { preferences ->
+            val value = preferences[MAP_THEME] ?: ThemeMode.SYSTEM.name
+            try {
+                ThemeMode.valueOf(value)
+            } catch (e: Exception) {
+                ThemeMode.SYSTEM
+            }
+        }
+
+    override suspend fun setMapTheme(theme: ThemeMode) {
+        dataStore.edit { preferences ->
+            preferences[MAP_THEME] = theme.name
+        }
+    }
+
+    override fun isMarkdownEnabled(): Flow<Boolean> = dataStore.data
+        .map { preferences -> preferences[MARKDOWN_ENABLED] ?: true }
+
+    override suspend fun setMarkdownEnabled(enabled: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[MARKDOWN_ENABLED] = enabled
         }
     }
 }

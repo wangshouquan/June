@@ -28,4 +28,6 @@ sealed interface SettingsAction {
     data class OnAutoTimeToggle(val enabled: Boolean) : SettingsAction
     data class OnStartOfWeekChange(val startOfWeek: DayOfWeek) : SettingsAction
     data class OnTimeFormatChange(val timeFormat: TimeFormat) : SettingsAction
+    data class OnMapThemeChange(val theme: ThemeMode) : SettingsAction
+    data class OnMarkdownToggle(val enabled: Boolean) : SettingsAction
 }

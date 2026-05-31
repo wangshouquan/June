@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -59,7 +61,7 @@ fun SettingsItem(
     trailingContent: (@Composable () -> Unit)? = null,
     enabled: Boolean = true,
     onClick: () -> Unit = {},
-    content: @Composable ColumnScope.() -> Unit = {}
+    content: (@Composable ColumnScope.() -> Unit)? = null
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceContainerLow.copy(alpha = if (enabled) 1f else 0.5f),
@@ -118,7 +120,10 @@ fun SettingsItem(
                     }
                 }
             }
-            content()
+            if (content != null) {
+                Spacer(Modifier.height(8.dp))
+                content()
+            }
         }
     }
 }

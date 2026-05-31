@@ -7,6 +7,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.res.stringResource
 import com.denser.june.core.R
 import com.denser.june.core.domain.model.enums.LockType
+import com.denser.june.core.domain.model.enums.ThemeMode
 import com.denser.june.presentation.screens.settings.SettingsState
 import com.denser.june.presentation.screens.settings.tiles.*
 import java.time.format.TextStyle
@@ -47,6 +48,14 @@ object SettingsTileRegistry {
         ) {
             listOf(
                 SettingTile(
+                    key = "REMINDERS",
+                    title = "Reminders",
+                    subtitle = { _, _ -> "Set journaling reminders" },
+                    category = "General",
+                    keywords = listOf("reminder", "notification", "schedule", "alert"),
+                    content = { RemindersTile() }
+                ),
+                SettingTile(
                     key = "INCLUDE_TIME",
                     title = "Include time",
                     subtitle = { _, _ -> "Always enable time when creating journals" },
@@ -63,6 +72,28 @@ object SettingsTileRegistry {
                     content = { TimeFormatTile() }
                 ),
                 SettingTile(
+                    key = "DEFAULT_MAP_THEME",
+                    title = "Default map theme",
+                    subtitle = { _, state ->
+                        when (state.mapTheme) {
+                            ThemeMode.SYSTEM -> "System"
+                            ThemeMode.LIGHT -> "Light"
+                            ThemeMode.DARK -> "Dark"
+                        }
+                    },
+                    category = "General",
+                    keywords = listOf("map", "theme", "dark", "light", "location", "style"),
+                    content = { DefaultMapThemeTile() }
+                ),
+                SettingTile(
+                    key = "MARKDOWN_EDITOR",
+                    title = "Markdown editor",
+                    subtitle = { _, state -> if (state.isMarkdownEnabled) "Rich text formatting enabled" else "Plain text mode" },
+                    category = "General",
+                    keywords = listOf("markdown", "editor", "rich", "text", "format", "plain"),
+                    content = { MarkdownEditorTile() }
+                ),
+                SettingTile(
                     key = "START_OF_WEEK",
                     title = "Start of the week",
                     subtitle = { _, state -> state.startOfWeek.getDisplayName(TextStyle.FULL, java.util.Locale.getDefault()) },
@@ -70,15 +101,6 @@ object SettingsTileRegistry {
                     keywords = listOf("start", "week", "day", "calendar", "sunday", "monday"),
                     content = { StartOfWeekTile() }
                 ),
-                SettingTile(
-                    key = "REMINDERS",
-                    title = "Reminders",
-                    subtitle = { _, _ -> "Set journaling reminders" },
-                    category = "General",
-                    keywords = listOf("reminder", "notification", "schedule", "alert"),
-                    content = { RemindersTile() }
-                ),
-
                 SettingTile(
                     key = "DELETE_ALL_JOURNALS",
                     title = "Delete all journals",

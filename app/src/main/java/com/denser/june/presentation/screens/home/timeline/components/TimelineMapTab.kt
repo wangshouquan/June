@@ -33,6 +33,8 @@ import com.denser.june.presentation.theme.LocalInternetAllowed
 import com.denser.june.presentation.utils.MapTilerUtils
 import com.denser.june.presentation.screens.home.timeline.TimelineVM
 import com.denser.june.presentation.theme.LocalAppTheme
+import com.denser.june.core.domain.preferences.JournalPreferences
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.maplibre.android.MapLibre
 import org.maplibre.android.annotations.IconFactory
@@ -53,6 +55,9 @@ fun TimelineMapTab(
     val lifecycleOwner = LocalLifecycleOwner.current
     val isCalendarExpanded by viewModel.isCalendarExpanded.collectAsStateWithLifecycle()
     val isMapExpanded = !isCalendarExpanded
+    val journalPreferences = koinInject<JournalPreferences>()
+    val savedMapTheme by journalPreferences.mapTheme()
+        .collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
     remember(isInternetAllowed) {
         if (isInternetAllowed) MapLibre.getInstance(context) else null
     }
@@ -67,14 +72,21 @@ fun TimelineMapTab(
 
     val currentTheme = LocalAppTheme.current.themeMode
     val systemDark = isSystemInDarkTheme()
-    val initialMapTheme = remember(currentTheme, systemDark) {
-        when (currentTheme) {
-            ThemeMode.SYSTEM -> systemDark
+    val initialMapTheme = remember(savedMapTheme, currentTheme, systemDark) {
+        when (savedMapTheme) {
+            ThemeMode.SYSTEM -> when (currentTheme) {
+                ThemeMode.SYSTEM -> systemDark
+                ThemeMode.DARK -> true
+                ThemeMode.LIGHT -> false
+            }
             ThemeMode.DARK -> true
             ThemeMode.LIGHT -> false
         }
     }
     var isDarkMap by remember { mutableStateOf(initialMapTheme) }
+    LaunchedEffect(initialMapTheme) {
+        isDarkMap = initialMapTheme
+    }
     val primaryColor = MaterialTheme.colorScheme.primary.toArgb()
 
     fun getMarkerIcon(resId: Int, color: Int): org.maplibre.android.annotations.Icon {

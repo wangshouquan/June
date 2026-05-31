@@ -55,7 +55,9 @@ class SettingsVM(
             journalPrefs.startOfWeek(),
             journalPrefs.timeFormat(),
             fontPrefs.getAppFont(),
-            privacyPrefs.getIsInternetAllowedFlow()
+            privacyPrefs.getIsInternetAllowedFlow(),
+            journalPrefs.mapTheme(),
+            journalPrefs.isMarkdownEnabled()
         )
     ) { array ->
         val local = array[0] as SettingsState
@@ -69,6 +71,8 @@ class SettingsVM(
             startOfWeek = array[11] as DayOfWeek,
             timeFormat = array[12] as TimeFormat,
             isInternetAllowed = array[14] as Boolean,
+            mapTheme = array[15] as ThemeMode,
+            isMarkdownEnabled = array[16] as Boolean,
 
             appTheme = local.appTheme.copy(
                 seedColor = array[1] as Int,
@@ -146,6 +150,8 @@ class SettingsVM(
                 is SettingsAction.OnAutoTimeToggle -> journalPrefs.setAutoTimeEnabled(action.enabled)
                 is SettingsAction.OnStartOfWeekChange -> journalPrefs.setStartOfWeek(action.startOfWeek)
                 is SettingsAction.OnTimeFormatChange -> journalPrefs.setTimeFormat(action.timeFormat)
+                is SettingsAction.OnMapThemeChange -> journalPrefs.setMapTheme(action.theme)
+                is SettingsAction.OnMarkdownToggle -> journalPrefs.setMarkdownEnabled(action.enabled)
             }
         }
     }

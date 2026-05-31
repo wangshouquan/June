@@ -17,6 +17,7 @@ import com.denser.june.core.R
 import com.denser.june.presentation.components.JuneAppBarType
 import com.denser.june.presentation.components.JuneConfirmationDialog
 import com.denser.june.presentation.components.JuneTopAppBar
+import com.denser.june.presentation.components.JunePlaceholderPage
 import com.denser.june.presentation.navigation.AppNavigator
 import com.denser.june.presentation.navigation.Route
 import com.denser.june.presentation.screens.settings.components.ColorPickerSheet
@@ -47,12 +48,12 @@ fun SettingsScreen() {
             emptyList()
         } else {
             searchableSettings.filter { setting ->
-                val titleVal = setting.title
-                val subtitleVal = setting.subtitle(context, state)
-                titleVal.lowercase().contains(query) ||
-                subtitleVal?.lowercase()?.contains(query) == true ||
-                setting.category.lowercase().contains(query) ||
-                setting.keywords.any { keyword -> keyword.lowercase().contains(query) }
+                setting.key != "ABOUT_HEADER" && setting.key != "DEVELOPER" && (
+                    setting.title.lowercase().contains(query) ||
+                    setting.subtitle(context, state)?.lowercase()?.contains(query) == true ||
+                    setting.category.lowercase().contains(query) ||
+                    setting.keywords.any { keyword -> keyword.lowercase().contains(query) }
+                )
             }
         }
     }
@@ -214,14 +215,14 @@ fun SettingsScreen() {
                             item {
                                 Box(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(32.dp),
+                                        .fillParentMaxWidth()
+                                        .padding(vertical = 64.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = "No settings found for \"$searchQuery\"",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    JunePlaceholderPage(
+                                        icon = R.drawable.search_off_24px,
+                                        title = "No settings found",
+                                        subtitle = "We couldn't find any settings matching \"$searchQuery\"."
                                     )
                                 }
                             }

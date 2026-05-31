@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -34,11 +35,13 @@ import com.denser.hyphen.model.MarkupStyleRange
 
 @Composable
 fun JournalContentEditor(
+    modifier: Modifier = Modifier,
     state: HyphenTextState,
+    rawContent: String,
     onMarkdownChange: (String) -> Unit,
     onFocusChanged: (Boolean) -> Unit,
     focusRequester: FocusRequester,
-    modifier: Modifier = Modifier,
+    isMarkdownEnabled: Boolean = true,
 ) {
     val linkConfig = remember {
         HyphenLinkConfig(
@@ -108,6 +111,37 @@ fun JournalContentEditor(
         )
     }
 
+    if (!isMarkdownEnabled) {
+        TextField(
+            value = rawContent,
+            onValueChange = { newText ->
+                state.setMarkdown(newText)
+                onMarkdownChange(newText)
+            },
+            modifier = modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .onFocusChanged { focusState ->
+                    onFocusChanged(focusState.isFocused)
+                },
+            placeholder = {
+                Text(
+                    "What's on your mind?",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+            ),
+            colors = UiUtils.getTransparentTextFieldColors().copy(
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            ),
+            textStyle = MaterialTheme.typography.bodyLarge,
+        )
+        return
+    }
+
     HyphenTextField(
         state = state,
         linkConfig = linkConfig,
@@ -132,8 +166,8 @@ fun JournalContentEditor(
         colors = UiUtils.getTransparentTextFieldColors().copy(
             unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
             focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-            focusedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+            focusedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
         ),
         styleConfig = HyphenStyleConfig(
             boldStyle = SpanStyle(

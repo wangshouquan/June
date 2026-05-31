@@ -29,6 +29,7 @@ import com.denser.june.presentation.components.JuneTopAppBar
 import com.denser.june.presentation.screens.home.components.JournalOptionsSheet
 import com.denser.june.presentation.screens.editor.components.JournalItemsPreview
 import com.denser.june.presentation.screens.editor.components.MediaOperations
+import com.denser.june.core.domain.preferences.JournalPreferences
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import com.denser.hyphen.state.rememberHyphenTextState
@@ -51,7 +52,10 @@ import java.time.LocalTime
 fun EditorScreen() {
     val viewModel: EditorVM = koinViewModel()
     val navigator = koinInject<AppNavigator>()
+    val journalPreferences = koinInject<JournalPreferences>()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isMarkdownEnabled by journalPreferences.isMarkdownEnabled()
+        .collectAsStateWithLifecycle(initialValue = true)
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
@@ -163,7 +167,11 @@ fun EditorScreen() {
                         FilledIconButton(
                             onClick = { dialogState.showEmojiPicker = true },
                             colors = IconButtonDefaults.filledIconButtonColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                containerColor = if (state.emoji != null) {
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceContainerLow
+                                },
                                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(
                                     alpha = 0.75F
                                 )
@@ -232,16 +240,24 @@ fun EditorScreen() {
         },
         bottomBar = {
             if (isEditorFocused) {
-                EditorToolbar(
-                    state = hyphenState,
-                    activeTrigger = activeTrigger,
-                    tagSuggestions = state.tagSuggestions,
-                    currentTags = state.tags,
-                    onTagSelect = onTagSelect,
-                    modifier = Modifier
-                        .navigationBarsPadding()
-                        .imePadding()
-                )
+                if (isMarkdownEnabled) {
+                    EditorToolbar(
+                        state = hyphenState,
+                        activeTrigger = activeTrigger,
+                        tagSuggestions = state.tagSuggestions,
+                        currentTags = state.tags,
+                        onTagSelect = onTagSelect,
+                        modifier = Modifier
+                            .navigationBarsPadding()
+                            .imePadding()
+                    )
+                } else {
+                    Spacer(
+                        modifier = Modifier
+                            .navigationBarsPadding()
+                            .imePadding()
+                    )
+                }
             }
         },
         containerColor = MaterialTheme.colorScheme.surface
@@ -433,11 +449,13 @@ fun EditorScreen() {
 
                 JournalContentEditor(
                     state = hyphenState,
+                    rawContent = state.content,
                     onMarkdownChange = {
                         viewModel.onAction(EditorAction.ChangeContent(it))
                     },
                     onFocusChanged = { isEditorFocused = it },
                     focusRequester = contentFocusRequester,
+                    isMarkdownEnabled = isMarkdownEnabled,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 4.dp)

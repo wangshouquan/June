@@ -29,6 +29,9 @@ import com.denser.june.presentation.components.MapLocationPin
 import com.denser.june.presentation.components.MapAttributions
 import com.denser.june.presentation.theme.LocalAppTheme
 import com.denser.june.presentation.utils.MapTilerUtils
+import com.denser.june.core.domain.preferences.JournalPreferences
+import org.koin.compose.koinInject
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.maplibre.android.MapLibre
 import org.maplibre.compose.camera.CameraPosition
 import org.maplibre.compose.camera.rememberCameraState
@@ -52,6 +55,9 @@ fun JournalMapItem(
     var pressOffset by remember { mutableStateOf(DpOffset.Zero) }
     val interactionSource = remember { MutableInteractionSource() }
     val context = LocalContext.current
+    val journalPreferences = koinInject<JournalPreferences>()
+    val savedMapTheme by journalPreferences.mapTheme()
+        .collectAsStateWithLifecycle(initialValue = ThemeMode.SYSTEM)
 
     remember(isInternetAllowed) {
         if (isInternetAllowed) MapLibre.getInstance(context) else null
@@ -66,14 +72,21 @@ fun JournalMapItem(
 
     val currentTheme = LocalAppTheme.current.themeMode
     val systemDark = isSystemInDarkTheme()
-    val initialMapTheme = remember(currentTheme, systemDark) {
-        when (currentTheme) {
-            ThemeMode.SYSTEM -> systemDark
+    val initialMapTheme = remember(savedMapTheme, currentTheme, systemDark) {
+        when (savedMapTheme) {
+            ThemeMode.SYSTEM -> when (currentTheme) {
+                ThemeMode.SYSTEM -> systemDark
+                ThemeMode.DARK -> true
+                ThemeMode.LIGHT -> false
+            }
             ThemeMode.DARK -> true
             ThemeMode.LIGHT -> false
         }
     }
     var isMapDarkMode by remember { mutableStateOf(initialMapTheme) }
+    LaunchedEffect(initialMapTheme) {
+        isMapDarkMode = initialMapTheme
+    }
     val mapStyleUrl = remember(isMapDarkMode) {
         if (isMapDarkMode) MapTilerUtils.STYLE_DARK else MapTilerUtils.STYLE_LIGHT
     }
